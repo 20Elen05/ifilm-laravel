@@ -1,7 +1,7 @@
 <template>
     <div>
         <h1 class="text-light font24 mt-5">To The Cinema</h1>
-        <router-link class="pr-widget" :to="{ name:'movie', params:{ id: item.id }}" v-for="item in movies">
+        <router-link class="pr-widget" :to="{ name:'movie', params:{ id: item.movie_id }}" v-for="item in movies">
             <div class="bg-grey mt-4 d-flex justify-content-between text-decoration-none">
                 <div class="d-flex align-items-start">
                     <img :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${item.poster_path}`" class="img-fluid w-30">

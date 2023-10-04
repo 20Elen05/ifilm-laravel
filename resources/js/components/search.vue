@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-12 col-md-6" v-for="movie in movies">
                 <div class="mt-4">
-                    <router-link :to="{ name:'movie', params:{ id: movie.id }}" class="d-block text-reset " >
+                    <router-link :to="{ name:'movie', params:{ id: movie.movie_id }}" class="d-block text-reset " >
                         <div class="d-flex pr-layer-widget">
                             <img class="img-fluid w-30 h-202 img-border" :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${movie.poster_path}`">
                             <div class="p-2 w-70 d-flex justify-content-between ">

@@ -5,7 +5,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class GenresSeeder extends Seeder
+class GenreSeeder extends Seeder
 {
     public function run()
     {

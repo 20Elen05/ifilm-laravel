@@ -3,7 +3,7 @@
         <div class="row">
             <Pagination class="ps-5" v-model="currentPage" :total-pages="100"></Pagination>
             <div v-for="item in movies" class="col-6 col-md-4 pb-4 d-block text-reset p-0 oneMovie">
-                <router-link :to="{ name:'movie', params:{ id: item.id }}" >
+                <router-link :to="{ name:'movie', params:{ id: item.movie_id }}" >
                     <div class="position-relative overflow-hidden text-white me-4 movie-layer">
                         <div class="pr-layer font-light hidden">
                             <h5>{{item.original_title}}</h5>

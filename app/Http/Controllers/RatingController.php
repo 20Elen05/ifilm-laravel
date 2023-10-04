@@ -32,7 +32,7 @@ class RatingController extends Controller {
 
             return response()->json(['message' => 'rated successfully'], 201);
         }else{
-            return response()->json(['message' => 'already rated'], 401);
+            return response()->json(['message' => 'already rated'], 409);
         }
     }
 }

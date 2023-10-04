@@ -50,7 +50,6 @@ class AuthController extends Controller{
             return response()->json(['message' => 'error']);
         }
     }
-
     public function getUsers(Request $request, $userIds){
         $userIdsArray = explode(',', $userIds);
         $users = User::whereIn('id', $userIdsArray)->get();
@@ -88,13 +87,10 @@ class AuthController extends Controller{
 
     public function show($userId) {
         $user = User::find($userId);
-
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);
         }
-
         $likedMovies = $user->likes;
-
         return response()->json(['user' => $user, 'likedMovies' => $likedMovies], 200);
     }
 }

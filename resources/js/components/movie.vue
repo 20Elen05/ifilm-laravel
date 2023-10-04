@@ -195,6 +195,7 @@ export default {
                     this.movie = response.data.movie;
 
                     const genres = this.movie.genres;
+                    console.log(genres);
                     const genreNames = genres.map(genre => genre.genre_name);
                     this.genreNamesString = genreNames.join(', ');
 
@@ -313,7 +314,7 @@ export default {
 
         async updateMovieRating(rating) {
             const ratingData = {
-                movie_id: this.movie.id,
+                movie_id: this.movie.movie_id,
                 rating: rating,
             };
             try {

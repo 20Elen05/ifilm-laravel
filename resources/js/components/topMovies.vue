@@ -4,7 +4,7 @@
             <h1 class="text-light font24 m-0">Top Movies</h1>
             <button class="custom-button"><img @click="reload" class="refresh" src="../assets/reload.png"></button>
         </div>
-        <router-link class="pr-widget" :to="{ name:'movie', params:{ id: item.id }}" v-for="item in movies" >
+        <router-link class="pr-widget" :to="{ name:'movie', params:{ id: item.movie_id }}" v-for="item in movies" >
             <div class="bg-grey mt-4 d-flex justify-content-between">
                 <div class="d-flex align-items-start ">
                     <img :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${item.poster_path}`" class="img-fluid w-30">

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Movie;
 use App\Models\Genre;
+use App\Models\Category;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Comment;
 use App\Models\User;
@@ -13,19 +14,19 @@ use Illuminate\Support\Facades\Storage;
 
 class MovieController extends Controller
 {
-    public function getMovies(Request $request)
-    {
+    public function getMovies(Request $request){
         $perPage = 20;
         $categoryId = 1;
 
-        $movies = Movie::where('category_id', $categoryId)
+        $category = Category::find($categoryId);
+
+        $movies = $category->movies()
             ->paginate($perPage);
 
         return response()->json($movies);
     }
 
-    public function show($id)
-    {
+    public function show($id){
         $movie = Movie::with('genres')->find($id);
 
         if (!$movie) {
@@ -37,9 +38,9 @@ class MovieController extends Controller
 
     public function getNavpanelMovies(Request $request)
     {
+        $category = Category::find(1);
 
-        $categoryId = 1;
-        $movies = Movie::where('category_id', $categoryId)
+        $movies = $category->movies()
             ->paginate(20);
 
         return response()->json($movies);
@@ -48,9 +49,10 @@ class MovieController extends Controller
     public function getTopMovies(Request $request)
     {
         $perPage = 10;
-        $categoryId = 2;
 
-        $movies = Movie::where('category_id', $categoryId)
+        $category = Category::find(2);
+
+        $movies = $category->movies()
             ->paginate($perPage);
 
         return response()->json($movies);
@@ -58,8 +60,9 @@ class MovieController extends Controller
 
     public function getnowPlayingMovies(Request $request)
     {
-        $categoryId = 3;
-        $movies = Movie::where('category_id', $categoryId)
+        $category = Category::find(3);
+
+        $movies = $category->movies()
             ->paginate(10);
 
         return response()->json($movies);
@@ -96,7 +99,7 @@ class MovieController extends Controller
     public function getLikedMovies(Request $request) {
         $likedMovieIds = $request->input('likedMovieIds');
 
-        $movies = Movie::whereIn('id', function($query) use ($likedMovieIds) {
+        $movies = Movie::whereIn('movie_id', function($query) use ($likedMovieIds) {
             $query->select('likeable_id')
                 ->from('likes')
                 ->where('likeable_type', 'App\Models\Movie')
@@ -105,7 +108,4 @@ class MovieController extends Controller
 
         return response()->json(['movies' => $movies]);
     }
-
-
-
 }

@@ -1,7 +1,7 @@
 <template>
     <Carousel v-bind="settings" :breakpoints="breakpoints">
     <Slide v-for="item in movies" :key="item.id" class="mt-4 pb-4 pt-0">
-        <router-link :to="{ name:'movie', params:{ id: item.id }}" class="filmNvp m-1 text-light ps-4" @click="getId(`${item.id }`)">
+        <router-link :to="{ name:'movie', params:{ id: item.movie_id }}" class="filmNvp m-1 text-light ps-4" @click="getId(`${item.id }`)">
             <img :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${item.poster_path}`" class="carousel__item img-fluid">
             <h2 class="font13 p-1 text-center mt-2">{{item.title}}</h2>
         </router-link>

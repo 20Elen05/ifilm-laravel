@@ -19,7 +19,6 @@ return new class extends Migration
         $table->float('vote_average');
         $table->unsignedInteger('vote_count');
         $table->date('release_date');
-        $table->integer('category_id');
         $table->integer('runtime');
         $table->string('production_countries');
         $table->integer('budget');
