@@ -66,15 +66,16 @@ export default {
     },
 
     methods : {
-        fetchData(){
-            axios.get(`/api/topMovies?page= ${this.topPage}`)
-                .then(response => {
-                    this.movies = response.data.data;
-                    console.log(this.movies)
-                })
-                .catch(error => {
-                    console.error('Error fetching movies:', error);
-                });
+        async fetchData() {
+            try {
+                const response = await axios.get(`/api/topMovies?page=${this.topPage}`);
+
+                this.movies = response.data.data;
+
+                console.log(this.movies);
+            } catch (error) {
+                console.error('Error fetching movies:', error);
+            }
         },
 
         reload() {

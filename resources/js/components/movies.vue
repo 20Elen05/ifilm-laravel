@@ -82,17 +82,16 @@ export default {
     },
 
     methods: {
-        fetchMovies() {
-            axios.get(`/api/movies?page=${this.currentPage}`)
-                .then(response => {
-                    this.movies = response.data.data;
-                    console.log(this.movies)
-                })
-                .catch(error => {
-                    console.error('Error fetching movies:', error);
-                });
-           },
+        async fetchMovies() {
+            try {
+                const response = await axios.get(`/api/movies?page=${this.currentPage}`);
+                this.movies = response.data.data;
 
+                console.log(this.movies);
+            } catch (error) {
+                console.error('Error fetching movies:', error);
+            }
+        },
         nextPage() {
             this.currentPage++;
             this.fetchMovies();

@@ -76,54 +76,63 @@ export default {
     },
 
     methods: {
-        getUser() {
-            axios.get(`/api/user/${this.userId}`)
-                .then(response => {
-                    this.user = response.data.user;
-                    this.firstName = this.user.first_name;
-                    this.surname = this.user.surname;
-                    this.username = this.user.username;
+        async getUser() {
+            try {
+                const userResponse = await axios.get(`/api/user/${this.userId}`);
 
-                    this.likedMoviesIds = response.data.likedMovies.map(movie => movie.likeable_id);
+                this.user = userResponse.data.user;
+                this.firstName = this.user.first_name;
+                this.surname = this.user.surname;
+                this.username = this.user.username;
 
-                    axios.get('/api/movies/liked', {
-                        params: {
-                            likedMovieIds: this.likedMoviesIds
-                        }
-                    })
-                        .then(response => {
-                            this.likedMovies = response.data.movies;
-                            console.log(this.likedMovies)
-                        })
-                        .catch(error => {
-                            console.error(error);
-                        });
-                })
-                .catch(error => {
-                    console.error(error);
+                const likedMoviesIds = userResponse.data.likedMovies.map(movie => movie.likeable_id);
+
+                const likedMoviesResponse = await axios.get('/api/movies/liked', {
+                    params: {
+                        likedMovieIds: likedMoviesIds,
+                    },
                 });
+
+                this.likedMovies = likedMoviesResponse.data.movies;
+
+                console.log(this.likedMovies);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
         },
 
         async logout() {
-            axios.post('api/logout')
-            localStorage.removeItem('userId');
-            localStorage.removeItem('token');
-            axios.defaults.headers.common['Authorization'] = ''
-            this.$router.push({ name: 'signIn' });
+            try {
+                await axios.post('/api/logout');
+
+                localStorage.removeItem('userId');
+                localStorage.removeItem('token');
+
+                axios.defaults.headers.common['Authorization'] = '';
+
+                this.$router.push({ name: 'signIn' });
+            } catch (error) {
+                console.error('Error logging out:', error);
+            }
         },
 
         async deleteAccount() {
             try {
                 const userId = localStorage.getItem('userId');
+
                 await axios.delete(`/api/users/${userId}`);
+
                 localStorage.removeItem('userId');
                 localStorage.removeItem('token');
-                axios.defaults.headers.common['Authorization'] = ''
+
+                axios.defaults.headers.common['Authorization'] = '';
+
                 this.$router.push('/');
             } catch (error) {
-                console.error(error);
+                console.error('Error deleting account:', error);
             }
         },
+
         showDeleteConfirmation() {
             const confirmed = window.confirm('Are you sure you want to delete your account?');
             if (confirmed) {

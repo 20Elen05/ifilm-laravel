@@ -64,15 +64,14 @@ export default {
     },
 
     methods : {
-        fetchData() {
-            axios.get(`/api/nowPlayingMovies`)
-                .then(response => {
-                    this.movies = response.data.data;
-                    console.log(this.movies)
-                })
-                .catch(error => {
-                    console.error('Error fetching movies:', error);
-                });
+        async fetchData() {
+            try {
+                const response = await axios.get(`/api/nowPlayingMovies`);
+                this.movies = response.data.data;
+                console.log(this.movies);
+            } catch (error) {
+                console.error('Error fetching movies:', error);
+            }
         },
     }
 }

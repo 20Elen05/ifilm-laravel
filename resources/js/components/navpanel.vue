@@ -71,15 +71,16 @@ export default{
     },
 
     methods: {
-        fetchDatas() {
-            axios.get(`/api/navpanelMovies?`)
-                .then(response => {
-                    this.movies = response.data.data;
-                    console.log(this.movies)
-                })
-                .catch(error => {
-                    console.error('Error fetching movies:', error);
-                });
+        async fetchDatas() {
+            try {
+                const response = await axios.get(`/api/navpanelMovies`);
+
+                this.movies = response.data.data;
+
+                console.log(this.movies);
+            } catch (error) {
+                console.error('Error fetching movies:', error);
+            }
         },
 
         getId(id){

@@ -1,5 +1,10 @@
 <?php
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MovieController;
+use App\Http\Controllers\RatingController;
+use App\Http\Controllers\LikeController;
+use App\Http\Controllers\CommentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,44 +17,39 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
+Route::controller(AuthController::class)->group(function () {
+    Route::post('/signUp', 'signupUser')->name('signupUser');
+    Route::post('/signIn', 'signinUser')->name('signinUser');
+//    Route::get('getUserId', '/user-id');
+    Route::get('/user/{userId}', 'show');
+
+    Route::middleware(['auth:sanctum'])->group(function (){
+        Route::get('/user', function (Request $request) {return $request->user();});
+        Route::post('/logout', 'logout');
+        Route::delete('/users/{userId}', 'deleteAccount');
+        Route::get('/users/{userIds}', 'getUsers');
     });
-    Route::post('/logout', 'AuthController@logout');
-    Route::delete('/users/{userId}', 'AuthController@deleteAccount');
-    Route::get('/users/{userIds}', 'AuthController@getUsers');
-    Route::post('/rate-movie', 'App\Http\Controllers\RatingController@rateMovie');
 });
 
-Route::namespace('App\Http\Controllers')->group(function () {
-    Route::post('/signUp', 'AuthController@signupUser')->name('signupUser');
-    Route::post('/signIn', 'AuthController@signinUser')->name('signinUser');
-    Route::get('/user-id', 'AuthController@getUserId');
-    Route::get('/user/{userId}', 'AuthController@show');
+Route::controller(MovieController::class)->group(function () {
+    Route::get('/movies', 'getMovies');
+    Route::get('/movie/{id}', 'show');
+    Route::get('/navpanelMovies', 'getNavpanelMovies');
+    Route::get('/nowPlayingMovies', 'getnowPlayingMovies');
+    Route::get('/topMovies', 'getTopMovies');
+    Route::get('/search', 'search');
+    Route::get('movies/liked', 'getLikedMovies');
+    Route::middleware('auth:sanctum')->get('/movies/{id}/check-like-status', 'checkLikeStatus');
 });
 
-Route::namespace('App\Http\Controllers')->group(function () {
-    Route::get('/movies', 'MovieController@getMovies');
-    Route::get('/movie/{id}', 'MovieController@show');
-    Route::get('/navpanelMovies', 'MovieController@getNavpanelMovies');
-    Route::get('/nowPlayingMovies', 'MovieController@getnowPlayingMovies');
-    Route::get('/topMovies', 'MovieController@getTopMovies');
-    Route::get('/search', 'MovieController@search');
-    Route::get('movies/liked', 'MovieController@getLikedMovies');
-    Route::middleware('auth:sanctum')->get('/movies/{id}/check-like-status', 'MovieController@checkLikeStatus');
-
+Route::controller(LikeController::class)->middleware(['auth:sanctum'])->group(function () {
+    Route::post('/movies/{id}/like', 'toggleLikeMovie');
+    Route::post('/comments/{id}/like', 'toggleLikeCom');
 });
 
-Route::namespace('App\Http\Controllers')->group(function () {
-    Route::middleware('auth:sanctum')->post('/movies/{id}/like', 'LikeController@toggleLikeMovie');
-    Route::middleware('auth:sanctum')->post('/comments/{id}/like', 'LikeController@toggleLikeCom');
+Route::controller(CommentController::class)->group(function () {
+    Route::get('/movie/{movie}/comments', 'index');
+    Route::middleware('auth:sanctum')->post('/movie/{movie}/comments', 'store');
 });
 
-Route::namespace('App\Http\Controllers')->group(function(){
-    Route::get('/movie/{movie}/comments', 'CommentController@index');
-    Route::middleware('auth:sanctum')->post('/movie/{movie}/comments', 'CommentController@store');
-});
-
-
-
+Route::middleware('auth:sanctum')->post('/rate-movie', 'App\Http\Controllers\RatingController@rateMovie');

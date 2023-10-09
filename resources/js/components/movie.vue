@@ -187,66 +187,69 @@ export default {
     },
 
     methods: {
-        fetchData() {
-            const movieId = this.$route.params.id;
-            axios.get(`/api/movie/${movieId}`)
-                .then(response => {
-                    console.log(response.data.movie);
-                    this.movie = response.data.movie;
+        async fetchData() {
+            try {
+                const movieId = this.$route.params.id;
 
-                    const genres = this.movie.genres;
-                    console.log(genres);
-                    const genreNames = genres.map(genre => genre.genre_name);
-                    this.genreNamesString = genreNames.join(', ');
+                const movieResponse = await axios.get(`/api/movie/${movieId}`);
+                this.movie = movieResponse.data.movie;
 
-                    console.log((this.genreNamesString))
-                })
-                .catch(error => {
-                    console.error(error);
-                });
+                const genres = this.movie.genres;
+                const genreNames = genres.map(genre => genre.genre_name);
+                this.genreNamesString = genreNames.join(', ');
 
-            axios.get(`https://api.themoviedb.org/3/movie/${movieId}/similar?api_key=a348e7136197bd5186dd097b93931f79&language=${this.getLang}`)
-                .then(response => {
-                    this.similarMovies = response.data;
-                    console.log(this.similarMovies.results[0].title)
-                })
-                .catch(error => {
-                    console.log(error)
-                })
+                const apiKey = 'a348e7136197bd5186dd097b93931f79';
+                const lang = this.getLang;
+
+                const similarMoviesResponse = await axios.get(`https://api.themoviedb.org/3/movie/${movieId}/similar?api_key=${apiKey}&language=${lang}`);
+                this.similarMovies = similarMoviesResponse.data;
+
+                console.log(this.similarMovies.results[0].title);
+            } catch (error) {
+                console.error(error);
+            }
         },
 
-        submitComment() {
-            const movieId = this.$route.params.id;
-            axios.post(`/api/movie/${movieId}/comments`, {
-                content: this.newComment,
-            })
-                .then(response => {
-                    this.newComment = '';
-                    this.fetchComments();
-                })
-                .catch(error => {
-                    console.error(error);
-                });
+        async submitComment() {
+            try {
+                const movieId = this.$route.params.id;
+
+                if (!this.newComment) {
+                    return;
+                }
+
+                const commentData = {
+                    content: this.newComment,
+                };
+
+                const response = await axios.post(`/api/movie/${movieId}/comments`, commentData);
+
+                this.newComment = '';
+
+                this.fetchComments();
+            } catch (error) {
+                console.error(error);
+            }
         },
 
-        fetchComments() {
-            const movieId = this.$route.params.id;
-            axios.get(`/api/movie/${movieId}/comments`)
-                .then(response => {
-                    this.comments = response.data;
-                    const userId = parseInt(localStorage.getItem('userId'));
-                    for(let i=0; i<this.comments.length; i++){
-                        console.log('liked', this.comments[i].likes.find(like => like.user_id === userId))
-                        if (this.comments[i].likes.find(like => like.user_id === userId)) {
-                            this.comments[i].comLiked = true;
-                            // console.log('ASD', comment.comLiked)
-                        }
-                    }
-                    console.log('HERE', this.comments);
-                })
-                .catch(error => {
-                    console.error(error);
+        async fetchComments() {
+            try {
+                const movieId = this.$route.params.id;
+
+                const response = await axios.get(`/api/movie/${movieId}/comments`);
+                this.comments = response.data;
+
+                const userId = parseInt(localStorage.getItem('userId'));
+
+                this.comments.forEach(comment => {
+                    const liked = comment.likes.some(like => like.user_id === userId);
+                    comment.comLiked = liked;
                 });
+
+                console.log('HERE', this.comments);
+            } catch (error) {
+                console.error(error);
+            }
         },
 
         formatDate(timestamp) {
@@ -257,17 +260,18 @@ export default {
         async toggleLikeMovie() {
             try {
                 const movieId = this.$route.params.id;
+
                 const response = await axios.post(`/api/movies/${movieId}/like`);
 
                 this.fetchComments();
 
                 if (response.data.message === 'Movie liked successfully') {
                     this.isLiked = true;
-                    console.log(this.isLiked);
                 } else if (response.data.message === 'Movie is unliked') {
                     this.isLiked = false;
-                    console.log(this.isLiked);
                 }
+
+                console.log(this.isLiked);
             } catch (error) {
                 console.error('Error toggling like for movie:', error);
             }
@@ -276,15 +280,17 @@ export default {
         async checkMovieLikeStatus() {
             try {
                 const movieId = this.$route.params.id;
-                console.log(movieId)
+                console.log(movieId);
+
                 const response = await axios.get(`/api/movies/${movieId}/check-like-status`);
 
                 if (response.data.isLiked) {
                     this.isLiked = true;
-                    console.log(this.isLiked)
                 } else {
                     this.isLiked = false;
                 }
+
+                console.log(this.isLiked);
             } catch (error) {
                 console.error('Error checking like status for movie:', error);
             }
@@ -295,13 +301,14 @@ export default {
                 const response = await axios.post(`/api/comments/${comment.id}/like`);
 
                 if (response.data.message === 'Comment liked successfully') {
-                    this.comLiked= true;
-                    console.log(this.comLiked);
+                    comment.comLiked = true;
                 } else if (response.data.message === 'Com is unliked') {
-                    this.comLiked = false;
-                    console.log(this.comLiked);
+                    comment.comLiked = false;
                 }
+
                 this.fetchComments();
+
+                console.log(comment.comLiked);
             } catch (error) {
                 console.error('Error toggling like for comment:', error);
             }
@@ -317,9 +324,11 @@ export default {
                 movie_id: this.movie.movie_id,
                 rating: rating,
             };
+
             try {
                 const response = await axios.post('/api/rate-movie', ratingData);
                 console.log(response);
+
                 if (response.data.message === 'rated successfully') {
                     this.fetchData();
                 }
@@ -327,7 +336,6 @@ export default {
                 console.error('Error submitting rating:', error);
             }
         },
-
     },
 
     mounted(){

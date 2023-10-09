@@ -18,7 +18,7 @@
             </div>
             <span class="error-message">{{ passwordError }}</span>
         </label>
-        <span class="error-message">{{ signinError }}</span>
+        <span class="error-message font-black">{{ signinError }}</span>
         <p class="text-dark mt-4">Haven't registered yet?
             <strong>
                 <router-link :to="{path : '/'}" class="text-dark">Sign Up!</router-link>
@@ -87,38 +87,44 @@ export default {
         },
 
         async submitForm() {
-            const formData = {
-                username: this.inputValue.username,
-                password: this.inputValue.password,
-            };
+            try {
+                const formData = {
+                    username: this.inputValue.username,
+                    password: this.inputValue.password,
+                };
 
-            axios.post('api/signIn', formData)
-                .then(response => {
-                    if (response.data.message === 'error') {
-                        this.signinError = "Invalid username or password"
-                    } else if (response.data.message === 'Success') {
-                        const userId = response.data.user_id;
-                        localStorage.setItem('userId', userId);
-                        localStorage.setItem('token', response.data.token);
-                        axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-                        this.$router.push({ name: 'standart' });
-                    }
-                })
-                .catch(error => {
-                    if (error.response && error.response.data && error.response.data.errors) {
-                        this.validationErrors = error.response.data.errors;
+                const response = await axios.post('/api/signIn', formData);
 
-                        if (this.validationErrors.username) {
-                            this.usernameError = this.validationErrors.username[0]
-                        }
-                        if (this.validationErrors.password) {
-                            this.passwordError = this.validationErrors.password[0]
-                        } else {
-                            this.validationErrors = {};
-                        }
+                if (response.data.message === 'error') {
+                    this.signinError = "Invalid username or password";
+                } else if (response.data.message === 'Success') {
+                    const userId = response.data.user_id;
+
+                    localStorage.setItem('userId', userId);
+                    localStorage.setItem('token', response.data.token);
+
+                    axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+
+                    this.$router.push({ name: 'standart' });
+                }
+            } catch (error) {
+                if (error.response && error.response.data && error.response.data.errors) {
+                    this.validationErrors = error.response.data.errors;
+
+                    if (this.validationErrors.username) {
+                        this.usernameError = this.validationErrors.username[0];
                     }
-                });
+                    if (this.validationErrors.password) {
+                        this.passwordError = this.validationErrors.password[0];
+                    } else {
+                        this.validationErrors = {};
+                    }
+                } else {
+                    console.error('Error during sign-in:', error);
+                }
+            }
         }
+
     }
 };
 </script>

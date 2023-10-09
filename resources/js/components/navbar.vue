@@ -91,18 +91,23 @@ export default {
   },
 
   methods: {
-      fetchSearchedMovie() {
-          axios.get('https://api.themoviedb.org/3/movie/top_rated?api_key=a348e7136197bd5186dd097b93931f79&language=en')
-          .then(response => {
+      async fetchSearchedMovie() {
+          try {
+              const apiKey = 'a348e7136197bd5186dd097b93931f79';
+              const language = 'en';
+
+              const response = await axios.get(`https://api.themoviedb.org/3/movie/top_rated?api_key=${apiKey}&language=${language}`);
+
               this.randomMovies = response.data;
-              this.getRandomId
-              const randomIndex = Math.floor(Math.random() * 800);
+
+              const randomIndex = Math.floor(Math.random() * this.randomMovies.results.length);
+
               this.randomId = randomIndex;
-              console.log(this.randomId)
-          })
-          .catch(error => {
-              console.log(error);
-          })
+
+              console.log(this.randomId);
+          } catch (error) {
+              console.error(error);
+          }
       },
 
       changeBorderColor(event) {

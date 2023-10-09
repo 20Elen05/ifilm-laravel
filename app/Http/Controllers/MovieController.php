@@ -43,7 +43,7 @@ class MovieController extends Controller
         $movies = $category->movies()
             ->paginate(20);
 
-        return response()->json($movies);
+        return response()->json($movies)->setStatusCode(200);
     }
 
     public function getTopMovies(Request $request)
@@ -55,7 +55,7 @@ class MovieController extends Controller
         $movies = $category->movies()
             ->paginate($perPage);
 
-        return response()->json($movies);
+        return response()->json($movies)->setStatusCode(200);
     }
 
     public function getnowPlayingMovies(Request $request)
@@ -65,7 +65,7 @@ class MovieController extends Controller
         $movies = $category->movies()
             ->paginate(10);
 
-        return response()->json($movies);
+        return response()->json($movies)->setStatusCode(200);
     }
 
     public function search(Request $request)
@@ -76,7 +76,7 @@ class MovieController extends Controller
             ->orWhere('overview', 'LIKE', '%' . $keyword . '%')
             ->get();
 
-        return response()->json($movies);
+        return response()->json($movies)->setStatusCode(200);
     }
 
     public function checkLikeStatus($id) {
@@ -85,7 +85,7 @@ class MovieController extends Controller
 
         $isLiked = $movie->likes()->where('user_id', $user->id)->exists();
 
-        return response()->json(['isLiked' => $isLiked]);
+        return response()->json(['isLiked' => $isLiked])->setStatusCode(200);
     }
 
 //    public function getLikedMovies(Request $request) {
@@ -106,6 +106,6 @@ class MovieController extends Controller
                 ->whereIn('likeable_id', $likedMovieIds);
         })->get();
 
-        return response()->json(['movies' => $movies]);
+        return response()->json(['movies' => $movies])->setStatusCode(200);
     }
 }

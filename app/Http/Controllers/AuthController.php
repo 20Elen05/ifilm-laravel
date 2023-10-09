@@ -26,8 +26,8 @@ class AuthController extends Controller{
         return response()->json([
             'message' => 'User registered successfully',
             'status' => true,
-            'token' => $user->CreateToken('API TOKEN')->plainTextToken,
-        ]);
+            'token' => $user->createToken('API TOKEN')->plainTextToken,
+        ])->setStatusCode(200);
     }
 
     public function signinUser(SigninRequest $request) {
@@ -45,7 +45,7 @@ class AuthController extends Controller{
                 'message' => 'Success',
                 'user_id' => $userId,
                 'token' => $token->plainTextToken,
-            ]);
+            ])->setStatusCode(200);
         } else {
             return response()->json(['message' => 'error']);
         }
@@ -54,7 +54,7 @@ class AuthController extends Controller{
         $userIdsArray = explode(',', $userIds);
         $users = User::whereIn('id', $userIdsArray)->get();
 
-        return response()->json($users);
+        return response()->json($users)->setStatusCode(200);
     }
 
     public function logout(Request $request) {
@@ -62,7 +62,7 @@ class AuthController extends Controller{
         if ($user) {
             $user->tokens()->delete();
             session(['authenticated' => false]);
-            return response()->json(['message' => 'Logged out successfully']);
+            return response()->json(['message' => 'Logged out successfully'])->setStatusCode(204);
         } else {
             return response()->json(['error' => 'User not authenticated'], 401);
         }
@@ -73,17 +73,17 @@ class AuthController extends Controller{
         if ($user) {
             $user->delete();
             $user->tokens()->delete();
-            return response()->json(['message' => 'User deleted successfully']);
+            return response()->json(['message' => 'User deleted successfully'])->setStatusCode(204);
         } else {
             return response()->json(['error' => 'User not found'], 404);
         }
     }
 
-    public function getUserId(Request $request){
-        $userId = $request->session()->get('user_id');
-        dd($userId);
-        return response()->json(['user_id' => $userId]);
-    }
+//    public function getUserId(Request $request){
+//        $userId = $request->session()->get('user_id');
+//        dd($userId);
+//        return response()->json(['user_id' => $userId]);
+//    }
 
     public function show($userId) {
         $user = User::find($userId);
@@ -91,6 +91,6 @@ class AuthController extends Controller{
             return response()->json(['error' => 'User not found'], 404);
         }
         $likedMovies = $user->likes;
-        return response()->json(['user' => $user, 'likedMovies' => $likedMovies], 200);
+        return response()->json(['user' => $user, 'likedMovies' => $likedMovies]);
     }
 }

@@ -94,48 +94,47 @@ export default {
             }
         },
 
-        submitForm() {
-            const formData = {
-                firstName: this.inputValue.firstName,
-                surname: this.inputValue.surname,
-                username: this.inputValue.username,
-                email: this.inputValue.email,
-                password: this.inputValue.password,
-            };
+        async submitForm() {
+            try {
+                const formData = {
+                    firstName: this.inputValue.firstName,
+                    surname: this.inputValue.surname,
+                    username: this.inputValue.username,
+                    email: this.inputValue.email,
+                    password: this.inputValue.password,
+                };
 
-                axios.post('api/signUp', formData)
-                    .then(response => {
-                        console.log("Sign up successful!");
-                        this.$router.push({ name: 'signIn' });
-                    })
-                    .catch(error => {
-                        console.log(error)
-                        if (error.response && error.response.data && error.response.data.errors) {
+                const response = await axios.post('/api/signUp', formData);
 
-                            this.validationErrors = error.response.data.errors;
+                console.log("Sign up successful!");
 
-                            if (this.validationErrors.firstName) {
-                                this.firstNameError = this.validationErrors.firstName[0]
-                            }
-                            if (this.validationErrors.surname) {
-                                this.surnameError = this.validationErrors.surname[0]
-                            }
-                            if (this.validationErrors.username) {
-                                this.usernameError = this.validationErrors.username[0]
-                            }
-                            if (this.validationErrors.email) {
-                                this.emailError = this.validationErrors.email[0]
-                            }
-                            if (this.validationErrors.password) {
-                                this.passwordError = this.validationErrors.password[0]
-                            }
+                this.$router.push({ name: 'signIn' });
+            } catch (error) {
+                console.error(error);
 
-                        } else {
-                            this.validationErrors = {};
-                        }
-                    });
+                if (error.response && error.response.data && error.response.data.errors) {
+                    this.validationErrors = error.response.data.errors;
 
-        }
+                    if (this.validationErrors.firstName) {
+                        this.firstNameError = this.validationErrors.firstName[0];
+                    }
+                    if (this.validationErrors.surname) {
+                        this.surnameError = this.validationErrors.surname[0];
+                    }
+                    if (this.validationErrors.username) {
+                        this.usernameError = this.validationErrors.username[0];
+                    }
+                    if (this.validationErrors.email) {
+                        this.emailError = this.validationErrors.email[0];
+                    }
+                    if (this.validationErrors.password) {
+                        this.passwordError = this.validationErrors.password[0];
+                    }
+                } else {
+                    this.validationErrors = {};
+                }
+            }
+        },
     },
      watch: {
          'inputValue.firstName': function (val) {

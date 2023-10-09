@@ -16,8 +16,6 @@ class LikeController extends Controller {
 
         $existingLike = $movie->likes()->where('user_id', $user->id)->first();
 
-//        dd($movie->likes());
-
         if ($existingLike) {
             $existingLike->delete();
             return response()->json(['message' => 'Movie is unliked']);
@@ -51,7 +49,7 @@ class LikeController extends Controller {
 
             $comment->increment('likes_count');
 
-            return response()->json(['message' => 'Comment liked successfully']);
+            return response()->json(['message' => 'Comment liked successfully'])->setStatusCode(201);
         }
     }
 }
