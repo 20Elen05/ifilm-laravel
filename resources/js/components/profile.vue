@@ -50,10 +50,12 @@
             </div>
         </div>
     </div>
+    <foooter></foooter>
 </template>
 
 <script>
 import navbar from './navbar.vue'
+import foooter from './footer.vue'
 import axios from 'axios';
 import { useStore } from 'vuex';
 import { mapGetters , mapActions} from 'vuex';
@@ -73,6 +75,7 @@ export default {
 
     components :{
         navbar,
+        foooter,
     },
 
     methods: {
