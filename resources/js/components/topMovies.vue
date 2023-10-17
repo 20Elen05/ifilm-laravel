@@ -7,9 +7,9 @@
         <router-link class="pr-widget" :to="{ name:'movie', params:{ id: item.movie_id }}" v-for="item in movies" >
             <div class="bg-grey mt-4 d-flex justify-content-between">
                 <div class="d-flex align-items-start ">
-                    <img :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${item.poster_path}`" class="img-fluid w-30">
+                    <img :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${item?.content?.poster_path}`" class="img-fluid w-30">
                     <div class="ms-2 mt-2 sideInfo">
-                        <p class="font-weight-bold m-0 text-light"> {{ item.title }}</p>
+                        <p class="font-weight-bold m-0 text-light"> {{ item?.content?.title }}</p>
                         <small class="text-light d-block">
                             <span>Year:</span>
                             <strong>{{ item.release_date }}</strong>
@@ -68,7 +68,7 @@ export default {
     methods : {
         async fetchData() {
             try {
-                const response = await axios.get(`/api/topMovies?page=${this.topPage}`);
+                const response = await axios.get(`/api/topMovies?page=${this.topPage}&lang=${this.getLang}`);
 
                 this.movies = response.data.data;
 

@@ -23,58 +23,120 @@ class MovieController extends Controller
         $movies = $category->movies()
             ->paginate($perPage);
 
+        $lang = $request->query('lang', 'en');
+
+        $movies->transform(function ($movie) use ($lang) {
+            $content = json_decode($movie->content, true);
+            $selectedContent = $content[$lang];
+            $movie->content = $selectedContent;
+            return $movie;
+        });
+
         return response()->json($movies);
     }
 
-    public function show($id){
+
+    public function show($id, Request $request){
+        $lang = $request->query('lang', 'en');
+
         $movie = Movie::with('genres')->find($id);
 
         if (!$movie) {
             return response()->json(['message' => 'Movie not found'], 404);
         }
 
+        $content = json_decode($movie->content, true);
+
+        $selectedContent = $content[$lang] ?? $content['en'];
+
+        $movie->content = $selectedContent;
+
         return response()->json(['movie' => $movie]);
     }
 
+
     public function getNavpanelMovies(Request $request)
     {
-        $category = Category::find(1);
+        $perPage = 20;
+        $categoryId = 1;
 
-        $movies = $category->movies()
-            ->paginate(20);
-
-        return response()->json($movies)->setStatusCode(200);
-    }
-
-    public function getTopMovies(Request $request)
-    {
-        $perPage = 10;
-
-        $category = Category::find(2);
+        $category = Category::find($categoryId);
 
         $movies = $category->movies()
             ->paginate($perPage);
 
+        $lang = $request->query('lang', 'en');
+
+        $movies->transform(function ($movie) use ($lang) {
+            $content = json_decode($movie->content, true);
+            $selectedContent = $content[$lang] ?? $content['en'];
+            $movie->content = $selectedContent;
+            return $movie;
+        });
+
         return response()->json($movies)->setStatusCode(200);
     }
 
-    public function getnowPlayingMovies(Request $request)
+
+    public function getTopMovies(Request $request)
     {
-        $category = Category::find(3);
+        $perPage = 10;
+        $categoryId = 2;
+
+        $category = Category::find($categoryId);
 
         $movies = $category->movies()
-            ->paginate(10);
+            ->paginate($perPage);
+
+        $lang = $request->query('lang', 'en');
+
+        $movies->transform(function ($movie) use ($lang) {
+            $content = json_decode($movie->content, true);
+            $selectedContent = $content[$lang] ?? $content['en'];
+            $movie->content = $selectedContent;
+            return $movie;
+        });
 
         return response()->json($movies)->setStatusCode(200);
     }
+
+
+    public function getNowPlayingMovies(Request $request)
+    {
+        $perPage = 10;
+        $categoryId = 3;
+
+        $category = Category::find($categoryId);
+
+        $movies = $category->movies()
+            ->paginate($perPage);
+
+        $lang = $request->query('lang', 'en');
+
+        $movies->transform(function ($movie) use ($lang) {
+            $content = json_decode($movie->content, true);
+            $selectedContent = $content[$lang] ?? $content['en'];
+            $movie->content = $selectedContent;
+            return $movie;
+        });
+
+        return response()->json($movies)->setStatusCode(200);
+    }
+
 
     public function search(Request $request)
     {
         $keyword = $request->query('keyword');
+        $lang = $request->query('lang', 'en');
 
-        $movies = Movie::where('title', 'LIKE', '%' . $keyword . '%')
-            ->orWhere('overview', 'LIKE', '%' . $keyword . '%')
+        $movies = Movie::whereRaw("JSON_UNQUOTE(JSON_EXTRACT(content, '$." . $lang . ".title')) LIKE ? OR JSON_UNQUOTE(JSON_EXTRACT(content, '$." . $lang . ".overview')) LIKE ?", ["%$keyword%", "%$keyword%"])
             ->get();
+
+        foreach ($movies as $movie) {
+            $content = json_decode($movie->content, true);
+            $selectedContent = $content[$lang] ?? $content['en'];
+            $movie->content = $selectedContent;
+        }
 
         return response()->json($movies)->setStatusCode(200);
     }
@@ -88,16 +150,9 @@ class MovieController extends Controller
         return response()->json(['isLiked' => $isLiked])->setStatusCode(200);
     }
 
-//    public function getLikedMovies(Request $request) {
-//        $likedMovieIds = $request->input('likedMovieIds');
-//
-//        $movies = Movie::whereIn('id', $likedMovieIds)->get();
-//
-//        return response()->json(['movies' => $movies]);
-//    }
-
     public function getLikedMovies(Request $request) {
         $likedMovieIds = $request->input('likedMovieIds');
+        $lang = $request->query('lang', 'en');
 
         $movies = Movie::whereIn('movie_id', function($query) use ($likedMovieIds) {
             $query->select('likeable_id')
@@ -106,6 +161,14 @@ class MovieController extends Controller
                 ->whereIn('likeable_id', $likedMovieIds);
         })->get();
 
+        $movies->transform(function ($movie) use ($lang) {
+            $content = json_decode($movie->content, true);
+            $selectedContent = $content[$lang] ?? $content['en'];
+            $movie->content = $selectedContent;
+            return $movie;
+        });
+
         return response()->json(['movies' => $movies])->setStatusCode(200);
     }
+
 }

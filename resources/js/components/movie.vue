@@ -6,13 +6,13 @@
             <div class="col-12 col-md-8">
                 <div class="row">
                     <div class="col-8 col-md-4">
-                        <img class="img-responsive" :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${movie?.poster_path}`">
+                        <img class="img-responsive" :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${movie?.content?.poster_path}`">
                     </div>
                     <div class="col-12 col-md-8">
                         <div class="list-group size14">
                             <div class="list-group-item pr-layer-widget text-light">
                                 <span >Title: </span>
-                                <strong> {{movie.title }}</strong>
+                                <strong> {{movie?.content?.title }}</strong>
                             </div>
                             <div class="list-group-item bg-transparent text-white">
                                 <span>Original name: </span>
@@ -43,7 +43,7 @@
                     <div class="col-12 mt-4">
                         <div class="pr-layer-widget p-3">
                             <h5>About film</h5>
-                            <p class="font-light">{{ movie.overview }}</p>
+                            <p class="font-light">{{ movie?.content?.overview }}</p>
                         </div>
                     </div>
                     <div class="col-12 col-md-8 mt-2">
@@ -190,11 +190,11 @@ export default {
         async fetchData() {
             try {
                 const movieId = this.$route.params.id;
-
-                const movieResponse = await axios.get(`/api/movie/${movieId}`);
+                const movieResponse = await axios.get(`/api/movie/${movieId}?lang=${this.getLang}`);
                 this.movie = movieResponse.data.movie;
 
                 const genres = this.movie.genres;
+                console.log(genres)
                 const genreNames = genres.map(genre => genre.genre_name);
                 this.genreNamesString = genreNames.join(', ');
 

@@ -27,7 +27,7 @@
                                 <span class="circle circleBorder text-white font-weight-bold d-inline-flex">{{ item.vote_average }}</span>
                             </div>
                         </div>
-                        <img :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${item.poster_path}`" class="img-fluid img-zoom">
+                        <img :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${item?.content?.poster_path}`" class="img-fluid img-zoom">
                     </div>
                 </router-link>
                 <rating :rating="item.vote_average" :max-rating="10" />
@@ -63,9 +63,9 @@ export default {
         }
     },
 
-    // computed: {
-    //     ...mapGetters(['getLang']),
-    // },
+    computed: {
+        ...mapGetters(['getLang']),
+    },
 
     mounted() {
         this.fetchMovies();
@@ -84,7 +84,8 @@ export default {
     methods: {
         async fetchMovies() {
             try {
-                const response = await axios.get(`/api/movies?page=${this.currentPage}`);
+                console.log(this.getLang)
+                const response = await axios.get(`/api/movies?page=${this.currentPage}&lang=${this.getLang}`);
                 this.movies = response.data.data;
 
                 console.log(this.movies);

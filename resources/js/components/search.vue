@@ -7,12 +7,12 @@
                 <div class="mt-4">
                     <router-link :to="{ name:'movie', params:{ id: movie.movie_id }}" class="d-block text-reset " >
                         <div class="d-flex pr-layer-widget">
-                            <img class="img-fluid w-30 h-202 img-border" :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${movie.poster_path}`">
+                            <img class="img-fluid w-30 h-202 img-border" :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${movie?.content?.poster_path}`">
                             <div class="p-2 w-70 d-flex justify-content-between ">
                                 <div class="d-grid">
                                     <div class="line-height-16">
-                                        <p class="font-weight-bold mb-1">{{ movie.title }}</p>
-                                        <small class="font12">{{ movie.overview }}</small>
+                                        <p class="font-weight-bold mb-1">{{ movie?.content?.title }}</p>
+                                        <small class="font12">{{ movie?.content?.overview }}</small>
                                     </div>
                                     <div class="d-sm-block align-self-end">
                                         <rating :rating='`${movie.vote_average}`' :max-rating="10"></rating>
@@ -86,7 +86,7 @@ export default {
             try {
                 const keyword = this.$route.params.keyword;
 
-                const response = await axios.get(`/api/search?keyword=${keyword}`);
+                const response = await axios.get(`/api/search?keyword=${keyword}&lang=${this.getLang}`);
 
                 this.movies = response.data;
 

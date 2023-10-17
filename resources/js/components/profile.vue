@@ -28,12 +28,12 @@
                 <div class="mt-4">
                     <router-link :to="{ name:'movie', params:{ id: movie.movie_id }}" class="d-block text-reset " >
                         <div class="d-flex pr-layer-widget">
-                            <img class="img-fluid w-30 h-202 img-border" :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${movie.poster_path}`">
+                            <img class="img-fluid w-30 h-202 img-border" :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${movie?.content?.poster_path}`">
                             <div class="p-2 w-70 d-flex justify-content-between ">
                                 <div class="d-grid">
                                     <div class="line-height-16">
-                                        <p class="font-weight-bold mb-1">{{ movie.title }}</p>
-                                        <small class="font12">{{ movie.overview }}</small>
+                                        <p class="font-weight-bold mb-1">{{ movie?.content?.title }}</p>
+                                        <small class="font12">{{ movie?.content?.overview }}</small>
                                     </div>
                                     <div class="d-sm-block align-self-end">
                                         <rating :rating='`${movie.vote_average}`' :max-rating="10"></rating>
@@ -76,6 +76,18 @@ export default {
     components :{
         navbar,
         foooter,
+        useStore,
+        mapGetters,
+    },
+
+    computed: {
+        ...mapGetters(['getLang']),
+    },
+
+    watch: {
+        getLang() {
+            this.getUser();
+        },
     },
 
     methods: {
@@ -90,7 +102,7 @@ export default {
 
                 const likedMoviesIds = userResponse.data.likedMovies.map(movie => movie.likeable_id);
 
-                const likedMoviesResponse = await axios.get('/api/movies/liked', {
+                const likedMoviesResponse = await axios.get(`/api/movies/liked?lang=${this.getLang}`, {
                     params: {
                         likedMovieIds: likedMoviesIds,
                     },

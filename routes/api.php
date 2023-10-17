@@ -20,7 +20,6 @@ use App\Http\Controllers\CommentController;
 Route::controller(AuthController::class)->group(function () {
     Route::post('/signUp', 'signupUser')->name('signupUser');
     Route::post('/signIn', 'signinUser')->name('signinUser');
-//    Route::get('getUserId', '/user-id');
     Route::get('/user/{userId}', 'show');
 
     Route::middleware(['auth:sanctum'])->group(function (){
