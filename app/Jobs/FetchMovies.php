@@ -19,106 +19,83 @@ class FetchMovies implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function handle() {
-        $this->fetchPopularMovies(390);
-        $this->fetchTopRatedMovies(390);
-        $this->fetchNowPlayingMovies(20);
+        $this->fetchAndSyncMovies('popular', 1);
+        $this->fetchAndSyncMovies('top_rated', 2);
+        $this->fetchAndSyncMovies('now_playing', 3);
     }
+    private function fetchAndSyncMovies($type, $categoryId) {
 
-    private function fetchPopularMovies($count) {
-        Movie::truncate();
-        CategoryMovie::truncate();
-        MovieGenre::truncate();
+        try{
+            $apiKey = "a348e7136197bd5186dd097b93931f79";
+            $movieCollection = collect();
+            $movieGenreCollection = collect();
+            $categoryCollection = collect();
 
-        $this->fetchMoviesByType('popular', $count, 1);
-    }
+                $response = Http::get("https://api.themoviedb.org/3/movie/$type?api_key=$apiKey&language=en");
+                $responseRu = Http::get("https://api.themoviedb.org/3/movie/$type?api_key=$apiKey&language=ru");
+                if ($response->successful() && $responseRu->successful()) {
+                    $films = $response->json()['results'];
+                    $filmsRu = $responseRu->json()['results'];
 
-    private function fetchTopRatedMovies($count) {
-        $this->fetchMoviesByType('top_rated', $count, 2);
-    }
+                    foreach ($films as $index => $movieData) {
+                        $movieId = $movieData['id'];
 
-    private function fetchNowPlayingMovies($count) {
-        $this->fetchMoviesByType('now_playing', $count, 3);
-    }
+                        $existingMovie = Movie::where('movie_id', $movieId)->first();
+                        if ($existingMovie) {
+                            continue;
+                        }
 
-    private function fetchMoviesByType($type, $count, $categoryId) {
+                        $movie = new Movie();
+                        $movie->movie_id = $movieId;
+                        $movie->original_language = $movieData['original_language'];
+                        $movie->original_title = $movieData['original_title'];
+                        $movie->popularity = $movieData['popularity'];
+                        $movie->vote_average = $movieData['vote_average'];
+                        $movie->vote_count = $movieData['vote_count'];
+                        $movie->release_date = $movieData['release_date'];
+                        $movie->content = json_encode([
+                            'en' => [
+                                'title' => $movieData['title'],
+                                'poster_path' => $movieData['poster_path'],
+                                'overview' => $movieData['overview'],
+                            ],
+                            'ru' => [
+                                'title' => $filmsRu[$index]['title'],
+                                'poster_path' => $filmsRu[$index]['poster_path'],
+                                'overview' => $filmsRu[$index]['overview'],
+                            ]
+                        ]);
+                        $movieResponse = Http::get("https://api.themoviedb.org/3/movie/{$movieData['id']}?api_key=$apiKey&language=en");
+                        if ($movieResponse->successful()) {
+                            $film = $movieResponse->json();
+                            $movie->runtime = $film['runtime'];
+                            $countries = $film['production_countries'];
+                            $movie->production_countries = implode(',', array_column($countries, 'name'));
+                            $movie->budget = $film['budget'];
+                        }
 
-    try{
-        $apiKey = "a348e7136197bd5186dd097b93931f79";
-        $page = 1;
-        $moviesCount = 0;
-        $movieCollection = collect();
-        $movieGenreCollection = collect();
-        $categoryCollection = collect();
+                        $genreIds = $movieData['genre_ids'];
+                        $existingGenres = Genre::whereIn('id', $genreIds)->get()->pluck('id');
+                        foreach ($existingGenres as $genreId) {
+                            $movieGenreCollection->add([
+                                'movie_id' => $movie->movie_id,
+                                'genre_id' => $genreId
+                            ]);
+                        }
 
-        while ($moviesCount < $count) {
-        $response = Http::get("https://api.themoviedb.org/3/movie/$type?api_key=$apiKey&language=en-US&page=$page");
+                        $categoryCollection->add([
+                            'movie_id' => $movie->movie_id,
+                            'category_id' => $categoryId
+                        ]);
 
-        if ($response->successful()) {
-            $films = $response->json()['results'];
-
-            foreach ($films as $movieData) {
-
-                $movieId = $movieData['id'];
-
-                $existingMovie = Movie::where('movie_id', $movieId)->first();
-                if ($existingMovie) {
-                    continue;
+                        $movieCollection->add($movie);
+                    }
                 }
-                $movie = new Movie();
-                $movie->movie_id = $movieData['id'];
-                $movie->title = $movieData['title'];
-                $movie->poster_path = $movieData['poster_path'] ?? null;
-                $movie->original_language = $movieData['original_language'];
-                $movie->original_title = $movieData['original_title'];
-                $movie->overview = $movieData['overview'];
-                $movie->popularity = $movieData['popularity'];
-                $movie->vote_average = $movieData['vote_average'];
-                $movie->vote_count = $movieData['vote_count'];
-                $movie->release_date = $movieData['release_date'];
-//                    $movie->category_id = $categoryId;
-
-                $movieResponse = Http::get("https://api.themoviedb.org/3/movie/{$movieData['id']}?api_key=$apiKey&language=en");
-                if ($movieResponse->successful()) {
-                    $film = $movieResponse->json();
-                    $movie->runtime = $film['runtime'];
-                    $countries = $film['production_countries'];
-                    $movie->production_countries = implode(',', array_column($countries, 'name'));
-                    $movie->budget = $film['budget'];
-                }
-
-                $genreIds = $movieData['genre_ids'];
-                $existingGenres = Genre::whereIn('id', $genreIds)->get()->pluck('id');
-                foreach ($existingGenres as $genreId) {
-                    $movieGenreCollection->add([
-                        'movie_id' => $movie->movie_id,
-                        'genre_id' => $genreId
-                    ]);
-                }
-
-                $categoryCollection->add([
-                    'movie_id' => $movie->movie_id,
-                    'category_id' => $categoryId
-                ]);
-
-                $movieCollection->add($movie);
-
-                $moviesCount++;
-
-                if ($moviesCount >= $count) {
-                    break;
-                }
-            }
-            $page++;
-        } else {
-            break;
+            Movie::insert($movieCollection->toArray());
+            MovieGenre::insert($movieGenreCollection->toArray());
+            CategoryMovie::insert($categoryCollection->toArray());
+        }catch(Exception $e) {
+            dd($e);
         }
     }
-    Movie::insert($movieCollection->toArray());
-    MovieGenre::insert($movieGenreCollection->toArray());
-    CategoryMovie::insert($categoryCollection->toArray());
-
-    }catch(Exception $e) {
-        dd($e);
-    }
-}
 }

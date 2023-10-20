@@ -31,7 +31,7 @@
                     </div>
                 </router-link>
                 <rating :rating="item.vote_average" :max-rating="10" />
-                <h2 class="font15 text-center text-white text-bold">{{item.original_title}}</h2>
+                <h2 class="font15 text-center text-white text-bold">{{item?.content?.title}}</h2>
             </div>
             <Pagination class="ps-5" v-model="currentPage" :total-pages="100" style="background-color: unset !important;"></Pagination>
         </div>
