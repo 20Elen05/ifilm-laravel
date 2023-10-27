@@ -77,7 +77,6 @@ export default{
 
                 this.movies = response.data.data;
 
-                console.log(this.movies);
             } catch (error) {
                 console.error('Error fetching movies:', error);
             }
@@ -85,7 +84,6 @@ export default{
 
         getId(id){
             this.id = id
-            console.log(id)
         },
         showNext() {
             this.$refs.carousel.next()

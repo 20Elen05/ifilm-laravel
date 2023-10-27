@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Movie;
 use App\Models\Genre;
@@ -24,7 +25,8 @@ class MovieController extends Controller
             ->paginate($perPage);
 
         $lang = $request->query('lang', 'en');
-
+//        app()->setLocale($lang);
+//        dd(app()->getLocale());
         $movies->transform(function ($movie) use ($lang) {
             $content = json_decode($movie->content, true);
             $selectedContent = $content[$lang];
@@ -36,10 +38,11 @@ class MovieController extends Controller
     }
 
 
-    public function show($id, Request $request){
+    public function show($id, Request $request): JsonResponse
+    {
         $lang = $request->query('lang', 'en');
 
-        $movie = Movie::with('genres')->find($id);
+        $movie = Movie::with('genres', 'categories')->find($id);
 
         if (!$movie) {
             return response()->json(['message' => 'Movie not found'], 404);

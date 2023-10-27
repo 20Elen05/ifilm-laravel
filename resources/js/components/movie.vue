@@ -11,38 +11,46 @@
                     <div class="col-12 col-md-8">
                         <div class="list-group size14">
                             <div class="list-group-item pr-layer-widget text-light">
-                                <span >Title: </span>
+                                <span v-if="this.getLang === 'en'">Title: </span>
+                                <span v-if="this.getLang === 'ru'">Название: </span>
                                 <strong> {{movie?.content?.title }}</strong>
                             </div>
                             <div class="list-group-item bg-transparent text-white">
-                                <span>Original name: </span>
+                                <span v-if="this.getLang === 'en'">Original name: </span>
+                                <span v-if="this.getLang === 'ru'">Оригинальное название: </span>
                                 <strong>{{ movie.original_title }}</strong>
                             </div>
                             <div class="list-group-item pr-layer-widget text-white">
-                                <span>Year: </span>
+                                <span v-if="this.getLang === 'en'">Year: </span>
+                                <span v-if="this.getLang === 'ru'">Год: </span>
                                 <strong>{{ movie.release_date }}</strong>
                             </div>
                             <div class="list-group-item bg-transparent text-white">
-                                <span> Genre: </span>
+                                <span v-if="this.getLang === 'en'"> Genre: </span>
+                                <span v-if="this.getLang === 'en'"> Жанр: </span>
                                 <strong> {{genreNamesString}}</strong>
                             </div>
                             <div class="list-group-item pr-layer-widget text-white">
-                                <span>Duration: </span>
+                                <span v-if="this.getLang === 'en'">Duration: </span>
+                                <span v-if="this.getLang === 'ru'">Время: </span>
                                 <strong>{{ movie.runtime }}m.</strong>
                             </div>
                             <div class="list-group-item bg-transparent text-white">
-                                <span>Country: </span>
+                                <span v-if="this.getLang === 'en'">Country: </span>
+                                <span v-if="this.getLang === 'ru'">Страна: </span>
                                 <strong> {{movie.production_countries }}, </strong>
                             </div>
                             <div class="list-group-item pr-layer-widget text-white">
-                                <span>Budget: </span>
+                                <span v-if="this.getLang === 'en'">Budget: </span>
+                                <span v-if="this.getLang === 'ru'">Бюджет: </span>
                                 <strong>{{ movie.budget }}$</strong>
                             </div>
                         </div>
                     </div>
                     <div class="col-12 mt-4">
                         <div class="pr-layer-widget p-3">
-                            <h5>About film</h5>
+                            <h5 v-if="this.getLang === 'en'">About film</h5>
+                            <h5 v-if="this.getLang === 'ru'">Про фильм</h5>
                             <p class="font-light">{{ movie?.content?.overview }}</p>
                         </div>
                     </div>
@@ -60,15 +68,29 @@
                             <i class="fa fa-heart" :class="{ isLiked }"></i>
                         </button>
 
-                        <p class="font20 text-right">Movie Rating: <strong>{{ movie.vote_average }} </strong></p>
-                        <p class="m-0 text-right">Total votes: {{ movie.vote_count }}</p>
+                        <p v-if="this.getLang === 'en'" class="font20 text-right">Movie Rating: <strong>{{ movie.vote_average }} </strong></p>
+                        <p v-if="this.getLang === 'ru'" class="font20 text-right">Рейтинг фильма: <strong>{{ movie.vote_average }} </strong></p>
+                        <p v-if="this.getLang === 'en'" class="m-0 text-right">Total votes: {{ movie.vote_count }}</p>
+                        <p v-if="this.getLang === 'ru'" class="m-0 text-right">Всего голосов: {{ movie.vote_count }}</p>
                     </div>
-                    <div class="col-12 mt-2 overflow-hidden" style="min-height: 370px;">
-                        <video style="border-style: solid; border-color: #fe7900;" class="w-100"></video>
+
+                    <div class="col-12 mt-2 overflow-hidden d-flex flex-column" style="min-height: 370px; background-color: #f97701; justify-content: center; align-items: center;" v-if="categoryIsNP === false">
+                        <p v-if="this.getLang === 'en'" style="font-size: 20px; text-align: center;">Oops, you don't have access to this movie.
+                            <br>
+                            Pay $3 and enjoy watching.</p>
+                        <p v-if="this.getLang === 'ru'" style="font-size: 20px; text-align: center;">К сожалению, у вас нет доступа к этому фильму.
+                            <br>
+                            Заплатите $3 и наслаждайтесь просмотром.</p>
+                        <button class="text-center btn btn-secondary" style="font-size: 16px;" type="button">Pay here</button>
+                    </div>
+
+                    <div class="col-12 mt-2 overflow-hidden" style="min-height: 370px;" v-if="categoryIsNP === true">
+                        <img src="../assets/movie.jpg" style="border-style: solid; border-color: #fe7900;" class="w-100"/>
                     </div>
                     <div class="col-12 mt-3 text-center">
                         <section class="position-relative text-white top-banner pr-layer-widget">
-                            <h5 class="text-start pt-3 ps-3 pr-3">Similar Movies</h5>
+                            <h5 v-if="this.getLang === 'en'" class="text-start pt-3 ps-3 pr-3">Similar Movies</h5>
+                            <h5 v-if="this.getLang === 'ru'" class="text-start pt-3 ps-3 pr-3">Похожие фильмы</h5>
                             <Carousel v-bind="settings" :breakpoints="breakpoints">
                                 <Slide v-for="item in similarMovies?.results" :key="item" class="mt-4 pb-4 pt-0">
                                     <router-link :to="{ name:'movie', params:{ id: item.id }}" class="filmSim m-1 ms-2 text-light ps-3">
@@ -123,7 +145,7 @@ import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
 import foooter from './footer.vue'
 import dayjs from 'dayjs';
 import 'font-awesome/css/font-awesome.min.css';
-
+import { StripeCheckout } from '@vue-stripe/vue-stripe';
 
 export default {
     name : 'movie',
@@ -140,6 +162,7 @@ export default {
         Navigation,
         foooter,
         dayjs,
+        StripeCheckout,
     },
 
     data() {
@@ -153,6 +176,7 @@ export default {
             users:'',
             isLiked: false,
             comLiked: false,
+            categoryIsNP:'',
         }
     },
 
@@ -192,11 +216,20 @@ export default {
                 const movieId = this.$route.params.id;
                 const movieResponse = await axios.get(`/api/movie/${movieId}?lang=${this.getLang}`);
                 this.movie = movieResponse.data.movie;
+                console.log(this.movie.categories)
 
                 const genres = this.movie.genres;
-                console.log(genres)
                 const genreNames = genres.map(genre => genre.genre_name);
                 this.genreNamesString = genreNames.join(', ');
+
+                for (const category of this.movie.categories) {
+                    if (category.id === 3) {
+                        this.categoryIsNP = false;
+                        break;
+                    }else{
+                        this.categoryIsNP = true;
+                    }
+                }
 
                 const apiKey = 'a348e7136197bd5186dd097b93931f79';
                 const lang = this.getLang;
@@ -204,7 +237,6 @@ export default {
                 const similarMoviesResponse = await axios.get(`https://api.themoviedb.org/3/movie/${movieId}/similar?api_key=${apiKey}&language=${lang}`);
                 this.similarMovies = similarMoviesResponse.data;
 
-                console.log(this.similarMovies.results[0].title);
             } catch (error) {
                 console.error(error);
             }
@@ -246,7 +278,6 @@ export default {
                     comment.comLiked = liked;
                 });
 
-                console.log('HERE', this.comments);
             } catch (error) {
                 console.error(error);
             }
@@ -280,7 +311,6 @@ export default {
         async checkMovieLikeStatus() {
             try {
                 const movieId = this.$route.params.id;
-                console.log(movieId);
 
                 const response = await axios.get(`/api/movies/${movieId}/check-like-status`);
 
@@ -290,7 +320,6 @@ export default {
                     this.isLiked = false;
                 }
 
-                console.log(this.isLiked);
             } catch (error) {
                 console.error('Error checking like status for movie:', error);
             }

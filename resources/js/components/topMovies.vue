@@ -1,7 +1,8 @@
 <template>
     <div>
         <div class="widget-header mb-4 d-flex align-items-center justify-content-between">
-            <h1 class="text-light font24 m-0">Top Movies</h1>
+            <h1 v-if="this.getLang === 'en'" class="text-light font24 m-0">Top Movies</h1>
+            <h1 v-if="this.getLang === 'ru'" class="text-light font24 m-0">Рекомендуемые фильмы</h1>
             <button class="custom-button"><img @click="reload" class="refresh" src="../assets/reload.png"></button>
         </div>
         <router-link class="pr-widget" :to="{ name:'movie', params:{ id: item.movie_id }}" v-for="item in movies" >
@@ -11,11 +12,13 @@
                     <div class="ms-2 mt-2 sideInfo">
                         <p class="font-weight-bold m-0 text-light"> {{ item?.content?.title }}</p>
                         <small class="text-light d-block">
-                            <span>Year:</span>
+                            <span v-if="this.getLang === 'en'">Year:</span>
+                            <span v-if="this.getLang === 'ru'">Год:</span>
                             <strong>{{ item.release_date }}</strong>
                         </small>
                         <small class="text-light d-block">
-                            <span>Total votes:</span>
+                            <span v-if="this.getLang === 'en'">Total votes:</span>
+                            <span v-if="this.getLang === 'ru'">Всего голосов:</span>
                             <strong>{{item.vote_count}}</strong>
                         </small>
                     </div>
@@ -72,7 +75,6 @@ export default {
 
                 this.movies = response.data.data;
 
-                console.log(this.movies);
             } catch (error) {
                 console.error('Error fetching movies:', error);
             }

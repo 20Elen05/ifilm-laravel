@@ -23,7 +23,8 @@
     </div>
     <div class="container">
         <div class="row">
-            <h2 class="text-center mt-3">Favorite Movies</h2>
+            <h2 v-if="this.getLang === 'en'" class="text-center mt-3">Favorite Movies</h2>
+            <h2 v-if="this.getLang === 'ru'" class="text-center mt-3">Любимые фильмы</h2>
             <div class="col-12 col-md-6" v-for="movie in likedMovies">
                 <div class="mt-4">
                     <router-link :to="{ name:'movie', params:{ id: movie.movie_id }}" class="d-block text-reset " >
@@ -110,7 +111,6 @@ export default {
 
                 this.likedMovies = likedMoviesResponse.data.movies;
 
-                console.log(this.likedMovies);
             } catch (error) {
                 console.error('Error fetching user data:', error);
             }
@@ -158,7 +158,6 @@ export default {
 
      mounted() {
          this.userId = localStorage.getItem('userId');
-         console.log(this.userId);
          this.getUser();
     },
 }

@@ -84,11 +84,9 @@ export default {
     methods: {
         async fetchMovies() {
             try {
-                console.log(this.getLang)
                 const response = await axios.get(`/api/movies?page=${this.currentPage}&lang=${this.getLang}`);
                 this.movies = response.data.data;
 
-                console.log(this.movies);
             } catch (error) {
                 console.error('Error fetching movies:', error);
             }

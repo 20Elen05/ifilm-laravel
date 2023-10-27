@@ -90,7 +90,6 @@ export default {
 
                 this.movies = response.data;
 
-                console.log(this.movies);
             } catch (error) {
                 console.error('Error fetching movies:', error);
             }

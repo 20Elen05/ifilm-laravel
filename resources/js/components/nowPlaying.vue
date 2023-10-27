@@ -1,6 +1,7 @@
 <template>
     <div>
-        <h1 class="text-light font24 mt-5">To The Cinema</h1>
+        <h1 v-if="this.getLang === 'en'" class="text-light font24 mt-5">To The Cinema</h1>
+        <h1 v-if="this.getLang === 'ru'" class="text-light font24 mt-5">В кино</h1>
         <router-link class="pr-widget" :to="{ name:'movie', params:{ id: item.movie_id }}" v-for="item in movies">
             <div class="bg-grey mt-4 d-flex justify-content-between text-decoration-none">
                 <div class="d-flex align-items-start">
@@ -8,11 +9,13 @@
                     <div class="ms-2 mt-2 sideInfo">
                         <p class="font-weight-bold m-0 text-light"> {{ item?.content?.title }}</p>
                         <small class="text-light d-block">
-                            <span>Year:</span>
+                            <span v-if="this.getLang === 'en'">Year:</span>
+                            <span v-if="this.getLang === 'ru'">Год:</span>
                             <strong class="">{{ item.release_date }}</strong>
                         </small>
                         <small class="text-light d-block">
-                            <span>Total votes:</span>
+                            <span v-if="this.getLang === 'en'">Total votes:</span>
+                            <span v-if="this.getLang === 'ru'">Всего голосов:</span>
                             <strong>{{item.vote_count}}</strong>
                         </small>
                     </div>
@@ -30,12 +33,13 @@
 import axios from 'axios';
 import { useStore } from 'vuex';
 import { mapGetters } from 'vuex';
+
 export default {
     name: 'nowPlaying',
 
     components: {
         useStore,
-        mapGetters
+        mapGetters,
     },
 
     data() {
@@ -68,7 +72,6 @@ export default {
             try {
                 const response = await axios.get(`/api/nowPlayingMovies?lang=${this.getLang}`);
                 this.movies = response.data.data;
-                console.log(this.movies);
             } catch (error) {
                 console.error('Error fetching movies:', error);
             }

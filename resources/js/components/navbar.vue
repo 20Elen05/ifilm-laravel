@@ -3,7 +3,8 @@
        <nav class="navbar pt-3 shadow-none navbar-light navbar-expand-lg">
             <div class="navbar-brand">
                 <router-link to="/standart">
-                    <img width="120" id="logo" :src="logoImage" />
+                    <img width="120" id="logo" v-if="this.isNightMode === false" src="../assets/ifilm.png" />
+                    <img width="120" id="logo" v-if="this.isNightMode === true"   src="../assets/light-mode-logo.png">
                 </router-link>
             </div>
             <select v-model="selectedLang"  class="font-light mx-2 text-light form-control border-0 p-0 shadow-none w-auto bg-transparent">
@@ -18,16 +19,22 @@
                     </router-link>
                 </form>
                 <div class="font-light navbar-nav px-3 font17 ms-auto test-right mt-2 mt-lg-0">
-                    <router-link :to="{ name:'movie', params:{ id: randomId }}" class="mx-3 ps-lg-3 text-light px-1">Random</router-link>
+                    <router-link v-if="selectedLang === 'en'" :to="{ name:'movie', params:{ id: randomId }}" class="mx-3 ps-lg-3 text-light px-1">Random</router-link>
+                    <router-link v-if="selectedLang === 'ru'" :to="{ name:'movie', params:{ id: randomId }}" class="mx-3 ps-lg-3 text-light px-1">Случайны</router-link>
                     <NightMode class="themeButton"></NightMode>
-                    <label for="themeMode" class="ms-3 custom-control-label">Night Mode</label>
+                    <label v-if="selectedLang === 'en'" for="themeMode" class="ms-3 custom-control-label">Night Mode</label>
+                    <label v-if="selectedLang === 'ru'" for="themeMode" class="ms-3 custom-control-label">Ночной режим</label>
                 </div>
             </div>
 
            <router-link :to="{name:'profile'}">
                <div class="side-by-side">
                    <img class="ms-4 d-block" src="../assets/account.png" />
-                   <div><p class="mt-3 ms-4 text-light">My Account</p></div>
+                   <div>
+                       <p v-if="selectedLang === 'en'" class="mt-3 ms-4 text-light">My Account</p>
+                       <p v-if="selectedLang === 'ru'" class="mt-3 ms-4 text-light">Мой Аккаунт</p>
+
+                   </div>
                </div>
            </router-link>
        </nav>
@@ -81,13 +88,6 @@ export default {
         this.$store.commit('setLang', value);
       }
     },
-      logoImage() {
-          if (this.isNightMode) {
-              return lightModeLogo;
-          } else {
-              return ifilmLogo ;
-          }
-      }
   },
 
   methods: {
@@ -104,7 +104,6 @@ export default {
 
               this.randomId = randomIndex;
 
-              console.log(this.randomId);
           } catch (error) {
               console.error(error);
           }
