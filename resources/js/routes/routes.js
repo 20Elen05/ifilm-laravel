@@ -29,6 +29,7 @@ const routes = [
     {path: '/movie/:id', component:() => import('../components/movie.vue'), name:'movie',beforeEnter:authMiddleware },
     {path: '/search/:keyword', component: () => import('../components/search.vue'), name: 'search' ,beforeEnter:authMiddleware },
     {path: '/profile', component: () => import ('../components/profile.vue'), name: 'profile',beforeEnter:authMiddleware },
+    {path: '/checkout', component: () => import ('../components/checkout.vue'), name: 'checkout',beforeEnter:authMiddleware },
 ];
 
 const router = createRouter({

@@ -52,3 +52,4 @@ Route::controller(CommentController::class)->group(function () {
 });
 
 Route::middleware('auth:sanctum')->post('/rate-movie', 'App\Http\Controllers\RatingController@rateMovie');
+Route::middleware('auth:sanctum')->post('/payments', 'App\Http\Controllers\PaymentController@store');

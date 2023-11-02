@@ -34,7 +34,14 @@ class Movie extends Model
     {
         return $this->morphMany(Like::class, 'likeable');
     }
-    public function categories() {
+
+    public function categories(): belongsToMany
+    {
         return $this->belongsToMany(Category::class, 'category_movie', 'movie_id', 'category_id');
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'movie_id', 'movie_id');
     }
 }

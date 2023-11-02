@@ -27,7 +27,7 @@
                             </div>
                             <div class="list-group-item bg-transparent text-white">
                                 <span v-if="this.getLang === 'en'"> Genre: </span>
-                                <span v-if="this.getLang === 'en'"> Жанр: </span>
+                                <span v-if="this.getLang === 'ru'"> Жанр: </span>
                                 <strong> {{genreNamesString}}</strong>
                             </div>
                             <div class="list-group-item pr-layer-widget text-white">
@@ -74,14 +74,16 @@
                         <p v-if="this.getLang === 'ru'" class="m-0 text-right">Всего голосов: {{ movie.vote_count }}</p>
                     </div>
 
-                    <div class="col-12 mt-2 overflow-hidden d-flex flex-column" style="min-height: 370px; background-color: #f97701; justify-content: center; align-items: center;" v-if="categoryIsNP === false">
+                    <div class="col-12 mt-2 overflow-hidden d-flex flex-column" style="min-height: 370px; background-color: #f8802e; justify-content: center; align-items: center;" v-if="categoryIsNP === false">
                         <p v-if="this.getLang === 'en'" style="font-size: 20px; text-align: center;">Oops, you don't have access to this movie.
                             <br>
-                            Pay $3 and enjoy watching.</p>
+                            Pay $4 and enjoy watching.</p>
                         <p v-if="this.getLang === 'ru'" style="font-size: 20px; text-align: center;">К сожалению, у вас нет доступа к этому фильму.
                             <br>
-                            Заплатите $3 и наслаждайтесь просмотром.</p>
-                        <button class="text-center btn btn-secondary" style="font-size: 16px;" type="button">Pay here</button>
+                            Заплатите $4 и наслаждайтесь просмотром.</p>
+                        <router-link :to="{ name: 'checkout', query: {movie: movieId } }">
+                            <button class="text-center btn btn-secondary" style="font-size: 16px;" type="button">Pay here</button>
+                        </router-link>
                     </div>
 
                     <div class="col-12 mt-2 overflow-hidden" style="min-height: 370px;" v-if="categoryIsNP === true">
@@ -168,11 +170,11 @@ export default {
     data() {
         return {
             movie : [],
+            movieId: '',
             similarMovies : [],
             newComment: '',
             comments: [],
             genreNamesString: '',
-            dateOnly: "",
             users:'',
             isLiked: false,
             comLiked: false,
@@ -213,10 +215,9 @@ export default {
     methods: {
         async fetchData() {
             try {
-                const movieId = this.$route.params.id;
-                const movieResponse = await axios.get(`/api/movie/${movieId}?lang=${this.getLang}`);
+                this.movieId = this.$route.params.id;
+                const movieResponse = await axios.get(`/api/movie/${this.movieId}?lang=${this.getLang}`);
                 this.movie = movieResponse.data.movie;
-                console.log(this.movie.categories)
 
                 const genres = this.movie.genres;
                 const genreNames = genres.map(genre => genre.genre_name);
@@ -224,17 +225,22 @@ export default {
 
                 for (const category of this.movie.categories) {
                     if (category.id === 3) {
-                        this.categoryIsNP = false;
-                        break;
-                    }else{
+                        const userId = localStorage.getItem('userId');
+                        const moviePayments = this.movie.payments;
+                        console.log(this.movie.payments)
+                        if (moviePayments.some(payment => payment.user_id === userId)) {
+                            this.categoryIsNP = false;
+                        } else {
+                            this.categoryIsNP = false;
+                        }
+                    } else {
                         this.categoryIsNP = true;
                     }
                 }
-
-                const apiKey = 'a348e7136197bd5186dd097b93931f79';
+                    const apiKey = 'a348e7136197bd5186dd097b93931f79';
                 const lang = this.getLang;
 
-                const similarMoviesResponse = await axios.get(`https://api.themoviedb.org/3/movie/${movieId}/similar?api_key=${apiKey}&language=${lang}`);
+                const similarMoviesResponse = await axios.get(`https://api.themoviedb.org/3/movie/${this.movieId}/similar?api_key=${apiKey}&language=${lang}`);
                 this.similarMovies = similarMoviesResponse.data;
 
             } catch (error) {

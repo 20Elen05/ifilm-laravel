@@ -86,9 +86,9 @@ export default {
     },
 
     watch: {
-        getLang() {
-            this.getUser();
-        },
+        // getUser() {
+        //     this.getUser();
+        // },
     },
 
     methods: {

@@ -9,6 +9,7 @@
     <router-view v-if="$route.name == 'profile'"></router-view>
     <router-view v-if="$route.name == 'movie'"></router-view>
     <router-view v-if="$route.name =='search'"></router-view>
+    <router-view v-if="$route.path == '/checkout'"></router-view>
   </template>
 
   <script>

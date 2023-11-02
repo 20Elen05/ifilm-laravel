@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Movie;
 use App\Models\Genre;
 use App\Models\Category;
+use App\Models\Payment;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Comment;
 use App\Models\User;
@@ -42,7 +43,7 @@ class MovieController extends Controller
     {
         $lang = $request->query('lang', 'en');
 
-        $movie = Movie::with('genres', 'categories')->find($id);
+        $movie = Movie::with('genres', 'categories', 'payments')->find($id);
 
         if (!$movie) {
             return response()->json(['message' => 'Movie not found'], 404);
