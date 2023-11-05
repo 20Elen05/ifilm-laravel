@@ -38,7 +38,6 @@ class MovieController extends Controller
         return response()->json($movies);
     }
 
-
     public function show($id, Request $request): JsonResponse
     {
         $lang = $request->query('lang', 'en');

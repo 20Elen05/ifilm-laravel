@@ -74,7 +74,7 @@
                         <p v-if="this.getLang === 'ru'" class="m-0 text-right">Всего голосов: {{ movie.vote_count }}</p>
                     </div>
 
-                    <div class="col-12 mt-2 overflow-hidden d-flex flex-column" style="min-height: 370px; background-color: #f8802e; justify-content: center; align-items: center;" v-if="categoryIsNP === false">
+                    <div class="col-12 mt-2 overflow-hidden d-flex flex-column" style="min-height: 370px; background-color: #f8802e; justify-content: center; align-items: center;" v-if="categoryIs3 === true">
                         <p v-if="this.getLang === 'en'" style="font-size: 20px; text-align: center;">Oops, you don't have access to this movie.
                             <br>
                             Pay $4 and enjoy watching.</p>
@@ -86,7 +86,7 @@
                         </router-link>
                     </div>
 
-                    <div class="col-12 mt-2 overflow-hidden" style="min-height: 370px;" v-if="categoryIsNP === true">
+                    <div class="col-12 mt-2 overflow-hidden" style="min-height: 370px;" v-if="categoryIs3 === false">
                         <img src="../assets/movie.jpg" style="border-style: solid; border-color: #fe7900;" class="w-100"/>
                     </div>
                     <div class="col-12 mt-3 text-center">
@@ -178,7 +178,7 @@ export default {
             users:'',
             isLiked: false,
             comLiked: false,
-            categoryIsNP:'',
+            categoryIs3:'',
         }
     },
 
@@ -227,17 +227,18 @@ export default {
                     if (category.id === 3) {
                         const userId = localStorage.getItem('userId');
                         const moviePayments = this.movie.payments;
-                        console.log(this.movie.payments)
-                        if (moviePayments.some(payment => payment.user_id === userId)) {
-                            this.categoryIsNP = false;
+                        console.log(moviePayments)
+                        if (moviePayments.some(payment => payment.user_id == userId)) {
+                            this.categoryIs3 = false;
                         } else {
-                            this.categoryIsNP = false;
+                            this.categoryIs3 = true;
                         }
                     } else {
-                        this.categoryIsNP = true;
+                        this.categoryIs3 = false;
                     }
                 }
-                    const apiKey = 'a348e7136197bd5186dd097b93931f79';
+
+                const apiKey = 'a348e7136197bd5186dd097b93931f79';
                 const lang = this.getLang;
 
                 const similarMoviesResponse = await axios.get(`https://api.themoviedb.org/3/movie/${this.movieId}/similar?api_key=${apiKey}&language=${lang}`);

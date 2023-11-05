@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::table('movies', function (Blueprint $table) {
             $table->dropColumn('overview');
             $table->dropColumn('poster_path');
-
         });
     }
 
