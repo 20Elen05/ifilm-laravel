@@ -3,16 +3,16 @@
     <div class="container d-flex justify-content-center align-items-center">
         <div class="card">
             <div class="upper">
-                <img src="../assets/light-mode-logo.png"  class="img-fluid">
+                <img src="../assets/light-mode-logo.png" class="img-fluid">
             </div>
             <div class="user text-center">
                 <div class="profile">
-                    <img src="../assets/profile-user.png"  class="rounded-circle" width="80">
+                    <img src="../assets/profile-user.png" class="rounded-circle" width="80">
                 </div>
             </div>
 
             <div class="mt-5 text-center">
-                <h4 class="mb-0">{{ firstName }} {{surname}} </h4>
+                <h4 class="mb-0">{{ firstName }} {{ surname }} </h4>
                 <span class="text-muted d-block mb-2">{{ username }}</span>
             </div>
             <div class="d-flex justify-content-center mt-2">
@@ -27,9 +27,10 @@
             <h2 v-if="this.getLang === 'ru'" class="text-center mt-3">Любимые фильмы</h2>
             <div class="col-12 col-md-6" v-for="movie in likedMovies">
                 <div class="mt-4">
-                    <router-link :to="{ name:'movie', params:{ id: movie.movie_id }}" class="d-block text-reset " >
+                    <router-link :to="{ name:'movie', params:{ id: movie.movie_id }}" class="d-block text-reset ">
                         <div class="d-flex pr-layer-widget">
-                            <img class="img-fluid w-30 h-202 img-border" :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${movie?.content?.poster_path}`">
+                            <img class="img-fluid w-30 h-202 img-border"
+                                 :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${movie?.content?.poster_path}`">
                             <div class="p-2 w-70 d-flex justify-content-between ">
                                 <div class="d-grid">
                                     <div class="line-height-16">
@@ -43,7 +44,7 @@
                                 </div>
                             </div>
                             <div class="d-flex align-items-end">
-                                <span class="circle text-white font-weight-bold m-2">{{movie.vote_average }}</span>
+                                <span class="circle text-white font-weight-bold m-2">{{ movie.vote_average }}</span>
                             </div>
                         </div>
                     </router-link>
@@ -58,23 +59,24 @@
 import navbar from './navbar.vue'
 import foooter from './footer.vue'
 import axios from 'axios';
-import { useStore } from 'vuex';
-import { mapGetters , mapActions} from 'vuex';
+import {useStore} from 'vuex';
+import {mapGetters, mapActions} from 'vuex';
+
 export default {
     name: 'profile',
 
     data() {
-        return{
-            firstName:'',
+        return {
+            firstName: '',
             surname: '',
-            username:'',
+            username: '',
             userId: '',
             likedMoviesId: [],
             likedMovies: [],
         }
     },
 
-    components :{
+    components: {
         navbar,
         foooter,
         useStore,
@@ -125,7 +127,7 @@ export default {
 
                 axios.defaults.headers.common['Authorization'] = '';
 
-                this.$router.push({ name: 'signIn' });
+                this.$router.push({name: 'signIn'});
             } catch (error) {
                 console.error('Error logging out:', error);
             }
@@ -156,9 +158,9 @@ export default {
         },
     },
 
-     mounted() {
-         this.userId = localStorage.getItem('userId');
-         this.getUser();
+    mounted() {
+        this.userId = localStorage.getItem('userId');
+        this.getUser();
     },
 }
 
@@ -166,8 +168,9 @@ export default {
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Poppins:weight@100;200;300;400;500;600;700;800&display=swap");
-body{
-    background-color:#545454;
+
+body {
+    background-color: #545454;
     font-family: "Poppins", sans-serif;
     font-weight: 300;
 }
@@ -184,10 +187,12 @@ button {
 button:hover {
     background-color: darkred;
 }
-.container{
+
+.container {
     height: auto;
 }
-.card{
+
+.card {
     width: 380px;
     border: none;
     border-radius: 15px;
@@ -197,32 +202,38 @@ button:hover {
     height: 300px;
     margin-top: 100px;
 }
-.upper{
+
+.upper {
     height: 100px;
 }
-.upper img{
+
+.upper img {
     width: 100%;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
 }
-.user{
+
+.user {
     position: relative;
 }
-.profile img{
+
+.profile img {
     height: 80px;
     width: 80px;
-    margin-top:2px;
+    margin-top: 2px;
 }
-.profile{
+
+.profile {
     position: absolute;
-    top:-50px;
+    top: -50px;
     left: 38%;
     height: 90px;
     width: 90px;
-    border:3px solid #000;
+    border: 3px solid #000;
     border-radius: 50%;
 }
-.stats span{
+
+.stats span {
     font-size: 29px;
 }
 </style>

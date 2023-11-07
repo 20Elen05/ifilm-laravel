@@ -1,6 +1,6 @@
 <template>
     <div>
-      <div class="star-rating">
+        <div class="star-rating">
          <span
              v-for="star in maxRating"
              :key="star"
@@ -12,15 +12,15 @@
          >
         &#9733;
       </span>
-      </div>
+        </div>
     </div>
 </template>
 
 <script>
-import { computed } from 'vue';
+import {computed} from 'vue';
 
 export default {
-  name:'rating',
+    name: 'rating',
     data() {
         return {
             tempRating: 0,
@@ -68,11 +68,11 @@ export default {
 
 <style>
 .star {
-  cursor: pointer;
-  color: #d8d8d8;
+    cursor: pointer;
+    color: #d8d8d8;
 }
 
 .filled {
-  color: #fe7900 ;
+    color: #fe7900;
 }
 </style>

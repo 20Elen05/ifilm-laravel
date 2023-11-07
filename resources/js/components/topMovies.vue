@@ -5,10 +5,11 @@
             <h1 v-if="this.getLang === 'ru'" class="text-light font24 m-0">Рекомендуемые фильмы</h1>
             <button class="custom-button"><img @click="reload" class="refresh" src="../assets/reload.png"></button>
         </div>
-        <router-link class="pr-widget" :to="{ name:'movie', params:{ id: item.movie_id }}" v-for="item in movies" >
+        <router-link class="pr-widget" :to="{ name:'movie', params:{ id: item.movie_id }}" v-for="item in movies">
             <div class="bg-grey mt-4 d-flex justify-content-between">
                 <div class="d-flex align-items-start ">
-                    <img :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${item?.content?.poster_path}`" class="img-fluid w-30">
+                    <img :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${item?.content?.poster_path}`"
+                         class="img-fluid w-30">
                     <div class="ms-2 mt-2 sideInfo">
                         <p class="font-weight-bold m-0 text-light"> {{ item?.content?.title }}</p>
                         <small class="text-light d-block">
@@ -19,7 +20,7 @@
                         <small class="text-light d-block">
                             <span v-if="this.getLang === 'en'">Total votes:</span>
                             <span v-if="this.getLang === 'ru'">Всего голосов:</span>
-                            <strong>{{item.vote_count}}</strong>
+                            <strong>{{ item.vote_count }}</strong>
                         </small>
                     </div>
                 </div>
@@ -33,20 +34,22 @@
 
 <script>
 import axios from 'axios';
-import { useStore } from 'vuex';
-import { mapGetters } from 'vuex';
+import {useStore} from 'vuex';
+import {mapGetters} from 'vuex';
+
 export default {
     name: 'topMovies',
 
     components: {
         useStore,
-        mapGetters},
+        mapGetters
+    },
 
     data() {
         return {
-            topMovies:[],
-            movies : [],
-            topPage : 1,
+            topMovies: [],
+            movies: [],
+            topPage: 1,
         }
     },
 
@@ -54,7 +57,7 @@ export default {
         ...mapGetters(['getLang']),
     },
 
-    mounted(){
+    mounted() {
         this.fetchData()
     },
 
@@ -68,7 +71,7 @@ export default {
         },
     },
 
-    methods : {
+    methods: {
         async fetchData() {
             try {
                 const response = await axios.get(`/api/topMovies?page=${this.topPage}&lang=${this.getLang}`);
@@ -96,12 +99,12 @@ export default {
     transition: all .3s ease;
 }
 
-.pr-widget :hover{
+.pr-widget :hover {
     transition: all .4s ease;
     transform: scale(1.02);
 }
 
-.font24{
+.font24 {
     font-size: 24px !important;
 }
 
@@ -116,7 +119,7 @@ export default {
     align-items: center;
     justify-content: center;
     background-color: #fe7900 !important;
-    border-radius: 50%!important;
+    border-radius: 50% !important;
 }
 
 .refresh {
@@ -124,14 +127,14 @@ export default {
 }
 
 .custom-button {
-  border: none;
-  background: none;
-  padding: 0;
-  margin: 0;
-  font-family: inherit;
-  font-size: inherit;
-  color: inherit;
-  cursor: pointer;
-  text-decoration: none;
+    border: none;
+    background: none;
+    padding: 0;
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    cursor: pointer;
+    text-decoration: none;
 }
 </style>

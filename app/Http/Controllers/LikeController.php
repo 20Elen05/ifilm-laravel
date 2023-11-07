@@ -1,15 +1,22 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers;
+
 use App\Models\Like;
 use App\Models\Comment;
 use App\Models\Movie;
+use Illuminate\Http\JsonResponse;
 use Auth;
-use Illuminate\Http\Request;
 
-class LikeController extends Controller {
+class LikeController extends Controller
+{
 
-    public function toggleLikeMovie(Request $request, $id) {
+    /**
+     * @param $id
+     * @return JsonResponse
+     */
+    public function toggleLikeMovie($id): JsonResponse
+    {
         $user = auth()->user();
 
         $movie = Movie::findOrFail($id);
@@ -30,7 +37,12 @@ class LikeController extends Controller {
         }
     }
 
-    public function toggleLikeCom(Request $request, $id){
+    /**
+     * @param $id
+     * @return JsonResponse
+     */
+    public function toggleLikeCom($id): JsonResponse
+    {
         $user = auth()->user();
         $comment = Comment::findOrFail($id);
 

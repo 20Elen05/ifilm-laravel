@@ -1,13 +1,20 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Rating;
 use App\Models\Movie;
+use App\Http\Requests\RatingRequest;
+use Illuminate\Http\JsonResponse;
 
-class RatingController extends Controller {
-    public function rateMovie(Request $request)
+
+class RatingController extends Controller
+{
+    /**
+     * @param RatingRequest $request
+     * @return JsonResponse
+     */
+    public function rateMovie(RatingRequest $request): JsonResponse
     {
         $user = auth()->user();
 
@@ -31,7 +38,7 @@ class RatingController extends Controller {
             $movie->save();
 
             return response()->json(['message' => 'rated successfully'], 201);
-        }else{
+        } else {
             return response()->json(['message' => 'already rated'], 409);
         }
     }

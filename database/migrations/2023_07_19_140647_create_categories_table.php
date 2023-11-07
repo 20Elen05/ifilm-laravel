@@ -1,21 +1,26 @@
-<?php
+<?php declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-   public function up()
-{
-    Schema::create('categories', function (Blueprint $table) {
-        $table->increments('id');
-        $table->string('category_name');
-    });
-}
+return new class extends Migration {
+    /**
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('categories', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('category_name');
+        });
+    }
 
-public function down()
-{
-    Schema::dropIfExists('categories');
-}
+    /**
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('categories');
+    }
 };

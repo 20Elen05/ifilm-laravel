@@ -1,22 +1,22 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use App\Models\Movie;
-use App\Models\Genre;
 use App\Models\Category;
-use App\Models\Payment;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Comment;
-use App\Models\User;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\MovieRequest;
+
 
 class MovieController extends Controller
 {
-    public function getMovies(Request $request){
+    /**
+     * @param MovieRequest $request
+     * @return JsonResponse
+     *
+     */
+    public function getMovies(MovieRequest $request): JsonResponse
+    {
         $perPage = 20;
         $categoryId = 1;
 
@@ -25,9 +25,8 @@ class MovieController extends Controller
         $movies = $category->movies()
             ->paginate($perPage);
 
-        $lang = $request->query('lang', 'en');
-//        app()->setLocale($lang);
-//        dd(app()->getLocale());
+        $lang = $request->input('lang', 'en');
+
         $movies->transform(function ($movie) use ($lang) {
             $content = json_decode($movie->content, true);
             $selectedContent = $content[$lang];
@@ -38,9 +37,14 @@ class MovieController extends Controller
         return response()->json($movies);
     }
 
-    public function show($id, Request $request): JsonResponse
+    /**
+     * @param $id
+     * @param MovieRequest $request
+     * @return JsonResponse
+     */
+    public function show($id, MovieRequest $request): JsonResponse
     {
-        $lang = $request->query('lang', 'en');
+        $lang = $request->input('lang', 'en');
 
         $movie = Movie::with('genres', 'categories', 'payments')->find($id);
 
@@ -57,8 +61,11 @@ class MovieController extends Controller
         return response()->json(['movie' => $movie]);
     }
 
-
-    public function getNavpanelMovies(Request $request)
+    /**
+     * @param MovieRequest $request
+     * @return JsonResponse
+     */
+    public function getNavpanelMovies(MovieRequest $request): JsonResponse
     {
         $perPage = 20;
         $categoryId = 1;
@@ -77,11 +84,14 @@ class MovieController extends Controller
             return $movie;
         });
 
-        return response()->json($movies)->setStatusCode(200);
+        return response()->json($movies, 200);
     }
 
-
-    public function getTopMovies(Request $request)
+    /**
+     * @param MovieRequest $request
+     * @return JsonResponse
+     */
+    public function getTopMovies(MovieRequest $request): JsonResponse
     {
         $perPage = 10;
         $categoryId = 2;
@@ -100,11 +110,14 @@ class MovieController extends Controller
             return $movie;
         });
 
-        return response()->json($movies)->setStatusCode(200);
+        return response()->json($movies);
     }
 
-
-    public function getNowPlayingMovies(Request $request)
+    /**
+     * @param MovieRequest $request
+     * @return JsonResponse
+     */
+    public function getNowPlayingMovies(MovieRequest $request): JsonResponse
     {
         $perPage = 10;
         $categoryId = 3;
@@ -123,11 +136,14 @@ class MovieController extends Controller
             return $movie;
         });
 
-        return response()->json($movies)->setStatusCode(200);
+        return response()->json($movies);
     }
 
-
-    public function search(Request $request)
+    /**
+     * @param MovieRequest $request
+     * @return JsonResponse
+     */
+    public function search(MovieRequest $request): JsonResponse
     {
         $keyword = $request->query('keyword');
         $lang = $request->query('lang', 'en');
@@ -141,23 +157,33 @@ class MovieController extends Controller
             $movie->content = $selectedContent;
         }
 
-        return response()->json($movies)->setStatusCode(200);
+        return response()->json($movies);
     }
 
-    public function checkLikeStatus($id) {
+    /**
+     * @param $id
+     * @return JsonResponse
+     */
+    public function checkLikeStatus($id): JsonResponse
+    {
         $user = auth()->user();
         $movie = Movie::findOrFail($id);
 
         $isLiked = $movie->likes()->where('user_id', $user->id)->exists();
 
-        return response()->json(['isLiked' => $isLiked])->setStatusCode(200);
+        return response()->json(['isLiked' => $isLiked]);
     }
 
-    public function getLikedMovies(Request $request) {
+    /**
+     * @param MovieRequest $request
+     * @return JsonResponse
+     */
+    public function getLikedMovies(MovieRequest $request): JsonResponse
+    {
         $likedMovieIds = $request->input('likedMovieIds');
         $lang = $request->query('lang', 'en');
 
-        $movies = Movie::whereIn('movie_id', function($query) use ($likedMovieIds) {
+        $movies = Movie::whereIn('movie_id', function ($query) use ($likedMovieIds) {
             $query->select('likeable_id')
                 ->from('likes')
                 ->where('likeable_type', 'App\Models\Movie')
@@ -171,7 +197,7 @@ class MovieController extends Controller
             return $movie;
         });
 
-        return response()->json(['movies' => $movies])->setStatusCode(200);
+        return response()->json(['movies' => $movies]);
     }
 
 }

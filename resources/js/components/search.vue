@@ -5,9 +5,10 @@
         <div class="row">
             <div class="col-12 col-md-6" v-for="movie in movies">
                 <div class="mt-4">
-                    <router-link :to="{ name:'movie', params:{ id: movie.movie_id }}" class="d-block text-reset " >
+                    <router-link :to="{ name:'movie', params:{ id: movie.movie_id }}" class="d-block text-reset ">
                         <div class="d-flex pr-layer-widget">
-                            <img class="img-fluid w-30 h-202 img-border" :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${movie?.content?.poster_path}`">
+                            <img class="img-fluid w-30 h-202 img-border"
+                                 :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${movie?.content?.poster_path}`">
                             <div class="p-2 w-70 d-flex justify-content-between ">
                                 <div class="d-grid">
                                     <div class="line-height-16">
@@ -21,14 +22,14 @@
                                 </div>
                             </div>
                             <div class="d-flex align-items-end">
-                                <span class="circle text-white font-weight-bold m-2">{{movie.vote_average }}</span>
+                                <span class="circle text-white font-weight-bold m-2">{{ movie.vote_average }}</span>
                             </div>
                         </div>
                     </router-link>
                 </div>
             </div>
         </div>
-<!--        <Pagination class="ps-25 pt-5" v-model="currentPage" :total-pages="100"></Pagination>-->
+        <!--        <Pagination class="ps-25 pt-5" v-model="currentPage" :total-pages="100"></Pagination>-->
     </div>
     <foooter></foooter>
 </template>
@@ -36,29 +37,31 @@
 
 <script>
 import axios from 'axios';
-import { useStore } from 'vuex';
-import { mapGetters } from 'vuex';
+import {useStore} from 'vuex';
+import {mapGetters} from 'vuex';
 import navbar from './navbar.vue'
 import navpanel from './navpanel.vue'
 import rating from './rating.vue'
-import { Pagination } from 'flowbite-vue'
+import {Pagination} from 'flowbite-vue'
 import foooter from './footer.vue'
 
 export default {
     name: 'search',
 
-    components: {navbar,
-                navpanel,
-                rating,
-                useStore,
-                mapGetters,
-                Pagination,
-                foooter},
+    components: {
+        navbar,
+        navpanel,
+        rating,
+        useStore,
+        mapGetters,
+        Pagination,
+        foooter
+    },
 
     data() {
         return {
             movies: [],
-            currentPage : 1,
+            currentPage: 1,
         }
     },
 
@@ -67,7 +70,7 @@ export default {
     },
 
 
-    mounted(){
+    mounted() {
         this.fetchMovies();
     },
 
@@ -125,7 +128,7 @@ small {
     max-height: 80px;
 }
 
-.h-202{
+.h-202 {
     height: 202px !important;
 }
 

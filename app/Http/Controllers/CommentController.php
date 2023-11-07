@@ -1,22 +1,23 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\User;
-use App\Models\Movie;
 use App\Models\Comment;
-use App\Models\Like;
+use App\Http\Requests\CommentRequest;
+use Illuminate\Http\JsonResponse;
 use Auth;
 
-class CommentController extends Controller{
-    public function store(Request $request, $movieId)
+class CommentController extends Controller
+{
+    /**
+     * @param CommentRequest $request
+     * @param $movieId
+     * @return JsonResponse
+     */
+    public function store(CommentRequest $request, int $movieId): JsonResponse
     {
         if (auth()->check()) {
             $userId = auth()->id();
-            $request->validate([
-                'content' => 'required|string',
-            ]);
 
             $comment = new Comment();
             $comment->movie_id = $movieId;
@@ -30,7 +31,12 @@ class CommentController extends Controller{
         }
     }
 
-    public function index($movieId) {
+    /**
+     * @param $movieId
+     * @return JsonResponse
+     */
+    public function index(int $movieId): JsonResponse
+    {
         $comments = Comment::with('user', 'likes')->where('movie_id', $movieId)->get();
 
         return response()->json($comments);

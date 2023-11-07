@@ -3,10 +3,10 @@
         <div class="row">
             <Pagination class="ps-5" v-model="currentPage" :total-pages="100"></Pagination>
             <div v-for="item in movies" class="col-6 col-md-4 pb-4 d-block text-reset p-0 oneMovie">
-                <router-link :to="{ name:'movie', params:{ id: item.movie_id }}" >
+                <router-link :to="{ name:'movie', params:{ id: item.movie_id }}">
                     <div class="position-relative overflow-hidden text-white me-4 movie-layer">
                         <div class="pr-layer font-light hidden">
-                            <h5>{{item.original_title}}</h5>
+                            <h5>{{ item.original_title }}</h5>
                             <ul class="p-0 list-style-none flex-wrap">
                                 <li class="font14 d-block">
                                     <span>Year: </span>
@@ -24,16 +24,20 @@
                                 </li>
                             </ul>
                             <div class="text-center mt-3 d-md-block">
-                                <span class="circle circleBorder text-white font-weight-bold d-inline-flex">{{ item.vote_average }}</span>
+                                <span class="circle circleBorder text-white font-weight-bold d-inline-flex">{{
+                                        item.vote_average
+                                    }}</span>
                             </div>
                         </div>
-                        <img :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${item?.content?.poster_path}`" class="img-fluid img-zoom">
+                        <img :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${item?.content?.poster_path}`"
+                             class="img-fluid img-zoom">
                     </div>
                 </router-link>
-                <rating :rating="item.vote_average" :max-rating="10" />
-                <h2 class="font15 text-center text-white text-bold">{{item?.content?.title}}</h2>
+                <rating :rating="item.vote_average" :max-rating="10"/>
+                <h2 class="font15 text-center text-white text-bold">{{ item?.content?.title }}</h2>
             </div>
-            <Pagination class="ps-5" v-model="currentPage" :total-pages="100" style="background-color: unset !important;"></Pagination>
+            <Pagination class="ps-5" v-model="currentPage" :total-pages="100"
+                        style="background-color: unset !important;"></Pagination>
         </div>
     </div>
 </template>
@@ -41,9 +45,9 @@
 <script>
 import axios from 'axios';
 import rating from './rating.vue'
-import { Pagination } from 'flowbite-vue'
-import { useStore } from 'vuex';
-import { mapGetters } from 'vuex';
+import {Pagination} from 'flowbite-vue'
+import {useStore} from 'vuex';
+import {mapGetters} from 'vuex';
 
 export default {
     name: 'movies',
@@ -52,12 +56,13 @@ export default {
         rating,
         useStore,
         mapGetters,
-        Pagination},
+        Pagination
+    },
 
     data() {
         return {
-            movies:[],
-            currentPage : 1,
+            movies: [],
+            currentPage: 1,
             perPage: 20,
             isHovered: false
         }
@@ -103,7 +108,7 @@ export default {
 
 <style>
 
-ul  {
+ul {
     display: flex !important;
 }
 
@@ -130,7 +135,7 @@ ul  {
 }
 
 .pr-layer {
-    background-color: rgba(33,33,33,.80);
+    background-color: rgba(33, 33, 33, .80);
     position: absolute;
     width: 100%;
     height: 100%;
@@ -139,17 +144,17 @@ ul  {
 }
 
 .img-zoom {
-  transition: transform 0.5s ease;
+    transition: transform 0.5s ease;
 }
 
 .hidden:hover .img-zoom {
-  transform: scale(1.5) !important;
-  transition: transform 0.5s ease;
+    transform: scale(1.5) !important;
+    transition: transform 0.5s ease;
 }
 
 .movie-layer:hover .img-zoom {
-  transform: scale(1.5);
-  transition: transform 0.5s ease;
+    transform: scale(1.5);
+    transition: transform 0.5s ease;
 }
 
 .text-bold {
@@ -170,7 +175,7 @@ ul > li > button:hover {
     background-color: #fe7900 !important;
 }
 
-.circleBorder{
+.circleBorder {
     border-color: white;
     border-width: 0.5px;
     border-style: solid;

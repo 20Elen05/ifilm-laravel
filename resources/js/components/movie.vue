@@ -6,14 +6,15 @@
             <div class="col-12 col-md-8">
                 <div class="row">
                     <div class="col-8 col-md-4">
-                        <img class="img-responsive" :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${movie?.content?.poster_path}`">
+                        <img class="img-responsive"
+                             :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${movie?.content?.poster_path}`">
                     </div>
                     <div class="col-12 col-md-8">
                         <div class="list-group size14">
                             <div class="list-group-item pr-layer-widget text-light">
                                 <span v-if="this.getLang === 'en'">Title: </span>
                                 <span v-if="this.getLang === 'ru'">Название: </span>
-                                <strong> {{movie?.content?.title }}</strong>
+                                <strong> {{ movie?.content?.title }}</strong>
                             </div>
                             <div class="list-group-item bg-transparent text-white">
                                 <span v-if="this.getLang === 'en'">Original name: </span>
@@ -28,7 +29,7 @@
                             <div class="list-group-item bg-transparent text-white">
                                 <span v-if="this.getLang === 'en'"> Genre: </span>
                                 <span v-if="this.getLang === 'ru'"> Жанр: </span>
-                                <strong> {{genreNamesString}}</strong>
+                                <strong> {{ genreNamesString }}</strong>
                             </div>
                             <div class="list-group-item pr-layer-widget text-white">
                                 <span v-if="this.getLang === 'en'">Duration: </span>
@@ -38,7 +39,7 @@
                             <div class="list-group-item bg-transparent text-white">
                                 <span v-if="this.getLang === 'en'">Country: </span>
                                 <span v-if="this.getLang === 'ru'">Страна: </span>
-                                <strong> {{movie.production_countries }}, </strong>
+                                <strong> {{ movie.production_countries }}, </strong>
                             </div>
                             <div class="list-group-item pr-layer-widget text-white">
                                 <span v-if="this.getLang === 'en'">Budget: </span>
@@ -64,30 +65,39 @@
                     </div>
 
                     <div class="col-12 col-md-4 mt-2">
-                        <button class="like-button mt-2"  @click="toggleLikeMovie">
+                        <button class="like-button mt-2" @click="toggleLikeMovie">
                             <i class="fa fa-heart" :class="{ isLiked }"></i>
                         </button>
 
-                        <p v-if="this.getLang === 'en'" class="font20 text-right">Movie Rating: <strong>{{ movie.vote_average }} </strong></p>
-                        <p v-if="this.getLang === 'ru'" class="font20 text-right">Рейтинг фильма: <strong>{{ movie.vote_average }} </strong></p>
+                        <p v-if="this.getLang === 'en'" class="font20 text-right">Movie Rating:
+                            <strong>{{ movie.vote_average }} </strong></p>
+                        <p v-if="this.getLang === 'ru'" class="font20 text-right">Рейтинг фильма:
+                            <strong>{{ movie.vote_average }} </strong></p>
                         <p v-if="this.getLang === 'en'" class="m-0 text-right">Total votes: {{ movie.vote_count }}</p>
                         <p v-if="this.getLang === 'ru'" class="m-0 text-right">Всего голосов: {{ movie.vote_count }}</p>
                     </div>
 
-                    <div class="col-12 mt-2 overflow-hidden d-flex flex-column" style="min-height: 370px; background-color: #f8802e; justify-content: center; align-items: center;" v-if="categoryIs3 === true">
-                        <p v-if="this.getLang === 'en'" style="font-size: 20px; text-align: center;">Oops, you don't have access to this movie.
+                    <div class="col-12 mt-2 overflow-hidden d-flex flex-column"
+                         style="min-height: 370px; background-color: #f8802e; justify-content: center; align-items: center;"
+                         v-if="categoryIs3 === true">
+                        <p v-if="this.getLang === 'en'" style="font-size: 20px; text-align: center;">Oops, you don't
+                            have access to this movie.
                             <br>
                             Pay $4 and enjoy watching.</p>
-                        <p v-if="this.getLang === 'ru'" style="font-size: 20px; text-align: center;">К сожалению, у вас нет доступа к этому фильму.
+                        <p v-if="this.getLang === 'ru'" style="font-size: 20px; text-align: center;">К сожалению, у вас
+                            нет доступа к этому фильму.
                             <br>
                             Заплатите $4 и наслаждайтесь просмотром.</p>
                         <router-link :to="{ name: 'checkout', query: {movie: movieId } }">
-                            <button class="text-center btn btn-secondary" style="font-size: 16px;" type="button">Pay here</button>
+                            <button class="text-center btn btn-secondary" style="font-size: 16px;" type="button">Pay
+                                here
+                            </button>
                         </router-link>
                     </div>
 
                     <div class="col-12 mt-2 overflow-hidden" style="min-height: 370px;" v-if="categoryIs3 === false">
-                        <img src="../assets/movie.jpg" style="border-style: solid; border-color: #fe7900;" class="w-100"/>
+                        <img src="../assets/movie.jpg" style="border-style: solid; border-color: #fe7900;"
+                             class="w-100"/>
                     </div>
                     <div class="col-12 mt-3 text-center">
                         <section class="position-relative text-white top-banner pr-layer-widget">
@@ -95,13 +105,16 @@
                             <h5 v-if="this.getLang === 'ru'" class="text-start pt-3 ps-3 pr-3">Похожие фильмы</h5>
                             <Carousel v-bind="settings" :breakpoints="breakpoints">
                                 <Slide v-for="item in similarMovies?.results" :key="item" class="mt-4 pb-4 pt-0">
-                                    <router-link :to="{ name:'movie', params:{ id: item.id }}" class="filmSim m-1 ms-2 text-light ps-3">
-                                        <img :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${item.poster_path}`" class="img-fluid mb-2">
-                                        <h2 class="size14 p-1">{{item.title}}</h2>
+                                    <router-link :to="{ name:'movie', params:{ id: item.id }}"
+                                                 class="filmSim m-1 ms-2 text-light ps-3">
+                                        <img
+                                            :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${item.poster_path}`"
+                                            class="img-fluid mb-2">
+                                        <h2 class="size14 p-1">{{ item.title }}</h2>
                                     </router-link>
                                 </Slide>
                                 <template #addons>
-                                    <Navigation />
+                                    <Navigation/>
                                 </template>
                             </Carousel>
                         </section>
@@ -117,10 +130,11 @@
                     <h5>Comments</h5>
 
                     <div class="bg-grey com" v-for="comment in comments" :key="comment.id">
-                        <p class="comUser mb-1">{{ comment.user.first_name}}</p>
-                        <button class="like-button mt-2 comLike"  @click="toggleLikeComment(comment)">
-                            <i class="fa fa-thumbs-up me-2" :class="{ 'comLiked': comment.comLiked, 'comDisliked': !comment.comLiked }" ></i>
-                            <p class="m-0">{{comment.likes_count}}</p>
+                        <p class="comUser mb-1">{{ comment.user.first_name }}</p>
+                        <button class="like-button mt-2 comLike" @click="toggleLikeComment(comment)">
+                            <i class="fa fa-thumbs-up me-2"
+                               :class="{ 'comLiked': comment.comLiked, 'comDisliked': !comment.comLiked }"></i>
+                            <p class="m-0">{{ comment.likes_count }}</p>
                         </button>
                         <p>{{ comment.content }}</p>
                         <p class="date">{{ formatDate(comment.created_at) }}</p>
@@ -136,23 +150,23 @@
 </template>
 <script>
 import axios from 'axios';
-import { useStore } from 'vuex';
-import { mapGetters } from 'vuex';
+import {useStore} from 'vuex';
+import {mapGetters} from 'vuex';
 import navbar from './navbar.vue'
 import navpanel from './navpanel.vue'
 import topMovies from './topMovies.vue'
 import rating from './rating.vue'
 import 'vue3-carousel/dist/carousel.css'
-import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
+import {Carousel, Slide, Pagination, Navigation} from 'vue3-carousel'
 import foooter from './footer.vue'
 import dayjs from 'dayjs';
 import 'font-awesome/css/font-awesome.min.css';
-import { StripeCheckout } from '@vue-stripe/vue-stripe';
+import {StripeCheckout} from '@vue-stripe/vue-stripe';
 
 export default {
-    name : 'movie',
+    name: 'movie',
 
-    components : {
+    components: {
         navbar,
         navpanel,
         topMovies,
@@ -169,16 +183,16 @@ export default {
 
     data() {
         return {
-            movie : [],
+            movie: [],
             movieId: '',
-            similarMovies : [],
+            similarMovies: [],
             newComment: '',
             comments: [],
             genreNamesString: '',
-            users:'',
+            users: '',
             isLiked: false,
             comLiked: false,
-            categoryIs3:'',
+            categoryIs3: '',
         }
     },
 
@@ -187,7 +201,7 @@ export default {
         snapAlign: 'center',
     },
 
-    breakpoints : {
+    breakpoints: {
         700: {
             itemsToShow: 3,
             snapAlign: 'center',
@@ -374,7 +388,7 @@ export default {
         },
     },
 
-    mounted(){
+    mounted() {
         this.fetchData();
         this.fetchComments();
         this.checkMovieLikeStatus();
@@ -385,7 +399,7 @@ export default {
 
 <style>
 
-.comBtn{
+.comBtn {
     border-style: solid;
     border-width: 1px;
     background-color: #fe7900;
@@ -403,7 +417,7 @@ export default {
     position: relative;
 }
 
-.comUser{
+.comUser {
     font-weight: bold;
 }
 
@@ -454,7 +468,7 @@ textarea::placeholder {
     padding: 0.75rem 1.25rem;
     margin-bottom: -1px;
     background-color: #fff;
-    border: 1px solid rgba(0,0,0,.125);
+    border: 1px solid rgba(0, 0, 0, .125);
 }
 
 .size14 {
@@ -474,7 +488,7 @@ textarea::placeholder {
 }
 
 .text-right {
-    text-align: right!important;
+    text-align: right !important;
 }
 
 .w-100 {
@@ -486,7 +500,7 @@ textarea::placeholder {
     height: 240px;
 }
 
-ul > li  {
+ul > li {
     background-color: unset !important;
 }
 

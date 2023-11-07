@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MovieController;
@@ -18,17 +19,21 @@ use App\Http\Controllers\CommentController;
 */
 
 Route::controller(AuthController::class)->group(function () {
+
     Route::post('/signUp', 'signupUser')->name('signupUser');
     Route::post('/signIn', 'signinUser')->name('signinUser');
     Route::get('/user/{userId}', 'show');
 
-    Route::middleware(['auth:sanctum'])->group(function (){
-        Route::get('/user', function (Request $request) {return $request->user();});
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/user', function (Request $request) {
+            return $request->user();
+        });
         Route::post('/logout', 'logout');
         Route::delete('/users/{userId}', 'deleteAccount');
         Route::get('/users/{userIds}', 'getUsers');
     });
 });
+
 
 Route::controller(MovieController::class)->group(function () {
     Route::get('/movies', 'getMovies');

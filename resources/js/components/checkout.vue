@@ -7,22 +7,24 @@
         </div>
         <div>
             <label for="email">Email</label>
-            <input id="email" type="email" v-model="email" />
+            <input id="email" type="email" v-model="email"/>
         </div>
         <div class="d-flex">
-            <router-link :to="{ name:'movie', params:{ id: movieId}}"> <button>Go back</button></router-link>
+            <router-link :to="{ name:'movie', params:{ id: movieId}}">
+                <button>Go back</button>
+            </router-link>
             <button @click="processPayment">Pay now!</button>
         </div>
     </div>
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
-import { loadStripe } from "@stripe/stripe-js";
+import {ref, onMounted} from "vue";
+import {loadStripe} from "@stripe/stripe-js";
 import {useRoute, useRouter} from "vue-router";
 
 export default {
-    name : 'checkout',
+    name: 'checkout',
     setup() {
         const stripe = ref(null);
         const elements = ref(null);
@@ -49,7 +51,7 @@ export default {
         });
 
         const processPayment = async () => {
-            const { token, error } = await stripe.value.createToken(card.value, {
+            const {token, error} = await stripe.value.createToken(card.value, {
                 email: email.value,
             });
 
@@ -58,11 +60,11 @@ export default {
             } else {
                 const userId = localStorage.getItem('userId');
 
-                const response = await axios.post('/api/payments',{
-                        movie_id: movieId.value,
-                        user_id: userId,
-                        token: token.id,
-                        email: email.value,
+                const response = await axios.post('/api/payments', {
+                    movie_id: movieId.value,
+                    user_id: userId,
+                    token: token.id,
+                    email: email.value,
                 });
                 console.log(response);
 

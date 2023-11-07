@@ -1,21 +1,26 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\SignUpRequest;
 use App\Http\Requests\SigninRequest;
 use App\Models\User;
-use App\Models\Movie;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Http\JsonResponse;
 use Auth;
 
-class AuthController extends Controller{
+class AuthController extends Controller
+{
 
     use HasApiTokens;
 
-    public function signupUser(SignupRequest $request) {
+    /**
+     * @param SignUpRequest $request
+     * @return JsonResponse
+     */
+    public function signupUser(SignupRequest $request): JsonResponse
+    {
         $user = User::create([
             'first_name' => $request->input('firstName'),
             'surname' => $request->input('surname'),
@@ -30,7 +35,12 @@ class AuthController extends Controller{
         ])->setStatusCode(200);
     }
 
-    public function signinUser(SigninRequest $request) {
+    /**
+     * @param SigninRequest $request
+     * @return JsonResponse
+     */
+    public function signinUser(SigninRequest $request): JsonResponse
+    {
 
         $username = $request->input('username');
         $password = $request->input('password');
@@ -50,14 +60,24 @@ class AuthController extends Controller{
             return response()->json(['message' => 'error']);
         }
     }
-    public function getUsers(Request $request, $userIds){
+
+    /**
+     * @param $userIds
+     * @return JsonResponse
+     */
+    public function getUsers($userIds): JsonResponse
+    {
         $userIdsArray = explode(',', $userIds);
         $users = User::whereIn('id', $userIdsArray)->get();
 
         return response()->json($users)->setStatusCode(200);
     }
 
-    public function logout(Request $request) {
+    /**
+     * @return JsonResponse
+     */
+    public function logout(): JsonResponse
+    {
         $user = Auth::user();
         if ($user) {
             $user->tokens()->delete();
@@ -68,7 +88,12 @@ class AuthController extends Controller{
         }
     }
 
-    public function deleteAccount($userId){
+    /**
+     * @param $userId
+     * @return JsonResponse
+     */
+    public function deleteAccount(int $userId): JsonResponse
+    {
         $user = User::find($userId);
         if ($user) {
             $user->delete();
@@ -79,13 +104,12 @@ class AuthController extends Controller{
         }
     }
 
-//    public function getUserId(Request $request){
-//        $userId = $request->session()->get('user_id');
-//        dd($userId);
-//        return response()->json(['user_id' => $userId]);
-//    }
-
-    public function show($userId) {
+    /**
+     * @param $userId
+     * @return JsonResponse
+     */
+    public function show(int $userId): JsonResponse
+    {
         $user = User::find($userId);
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);

@@ -1,6 +1,6 @@
 <template>
     <form action="/signUp" method="post" @submit.prevent="submitForm">
-        <img class="width300" src="@/assets/light-mode-logo.png" />
+        <img class="width300" src="@/assets/light-mode-logo.png"/>
 
         <label :class="{ 'error': validationErrors.firstName }">
             <p class="label-txt">FIRST NAME</p>
@@ -17,7 +17,7 @@
             <div class="line-box">
                 <div class="line"></div>
             </div>
-            <span class="error-message">{{ surnameError}}</span>
+            <span class="error-message">{{ surnameError }}</span>
         </label>
 
         <label :class="{ 'error': validationErrors.username }">
@@ -71,11 +71,11 @@ export default {
                 email: '',
                 password: ''
             },
-                firstNameError: '',
-                surnameError: '',
-                usernameError: '',
-                emailError: '',
-                passwordError: '',
+            firstNameError: '',
+            surnameError: '',
+            usernameError: '',
+            emailError: '',
+            passwordError: '',
 
             validationErrors: {},
         }
@@ -108,7 +108,7 @@ export default {
 
                 console.log("Sign up successful!");
 
-                this.$router.push({ name: 'signIn' });
+                this.$router.push({name: 'signIn'});
             } catch (error) {
                 console.error(error);
 
@@ -136,28 +136,28 @@ export default {
             }
         },
     },
-     watch: {
-         'inputValue.firstName': function (val) {
-             if (val.length < 3) {
+    watch: {
+        'inputValue.firstName': function (val) {
+            if (val.length < 3) {
                 this.firstNameError = 'The First Name should have at least 3 characters'
-             } else if(val.length > 10){
+            } else if (val.length > 10) {
                 this.firstNameError = 'The first name can have maximum 10 characters'
-             } else {
-                 this.firstNameError = ''
-             }
+            } else {
+                this.firstNameError = ''
+            }
         },
 
-         'inputValue.surname': function (val) {
-             if (val.length < 3) {
-                 this.surnameError = 'The surname should have at least 3 characters'
-             } else if(val.length > 16){
-                 this.surnameError = 'The surname can have maximum 10 characters'
-             } else {
-                 this.surnameError = ''
-             }
-         },
+        'inputValue.surname': function (val) {
+            if (val.length < 3) {
+                this.surnameError = 'The surname should have at least 3 characters'
+            } else if (val.length > 16) {
+                this.surnameError = 'The surname can have maximum 10 characters'
+            } else {
+                this.surnameError = ''
+            }
+        },
 
-         'inputValue.username': function (val) {
+        'inputValue.username': function (val) {
             if (val.length < 6) {
                 this.usernameError = 'The username should have at least 6 characters'
             } else if (val.length > 12) {
@@ -165,9 +165,9 @@ export default {
             } else {
                 this.usernameError = ''
             }
-         },
+        },
 
-         'inputValue.password': function (val) {
+        'inputValue.password': function (val) {
             if (val.length < 8) {
                 this.passwordError = 'The password should have at least 8 characters'
             } else if (val.length > 16) {
@@ -177,9 +177,7 @@ export default {
             }
         },
     },
-    computed: {
-
-    }
+    computed: {}
 };
 </script>
 
@@ -187,6 +185,7 @@ export default {
 .error {
     border-color: red;
 }
+
 .error-message {
     color: red;
     font-size: 18px;
@@ -252,7 +251,7 @@ label {
     transition: ease .6s;
 }
 
-.input:focus+.line-box .line {
+.input:focus + .line-box .line {
     width: 100%;
 }
 

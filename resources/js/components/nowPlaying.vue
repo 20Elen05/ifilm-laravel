@@ -5,7 +5,8 @@
         <router-link class="pr-widget" :to="{ name:'movie', params:{ id: item.movie_id }}" v-for="item in movies">
             <div class="bg-grey mt-4 d-flex justify-content-between text-decoration-none">
                 <div class="d-flex align-items-start">
-                    <img :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${item?.content?.poster_path}`" class="img-fluid w-30">
+                    <img :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${item?.content?.poster_path}`"
+                         class="img-fluid w-30">
                     <div class="ms-2 mt-2 sideInfo">
                         <p class="font-weight-bold m-0 text-light"> {{ item?.content?.title }}</p>
                         <small class="text-light d-block">
@@ -16,7 +17,7 @@
                         <small class="text-light d-block">
                             <span v-if="this.getLang === 'en'">Total votes:</span>
                             <span v-if="this.getLang === 'ru'">Всего голосов:</span>
-                            <strong>{{item.vote_count}}</strong>
+                            <strong>{{ item.vote_count }}</strong>
                         </small>
                     </div>
                 </div>
@@ -31,8 +32,8 @@
 
 <script>
 import axios from 'axios';
-import { useStore } from 'vuex';
-import { mapGetters } from 'vuex';
+import {useStore} from 'vuex';
+import {mapGetters} from 'vuex';
 
 export default {
     name: 'nowPlaying',
@@ -44,8 +45,8 @@ export default {
 
     data() {
         return {
-            nowPlaying:[],
-            movies : [],
+            nowPlaying: [],
+            movies: [],
         }
     },
 
@@ -53,7 +54,7 @@ export default {
         ...mapGetters(['getLang']),
     },
 
-    mounted(){
+    mounted() {
         this.fetchData()
     },
 
@@ -67,7 +68,7 @@ export default {
         },
     },
 
-    methods : {
+    methods: {
         async fetchData() {
             try {
                 const response = await axios.get(`/api/nowPlayingMovies?lang=${this.getLang}`);
@@ -83,7 +84,7 @@ export default {
 
 
 <style>
-.font-weight-bold{
+.font-weight-bold {
     font-weight: 700;
 }
 

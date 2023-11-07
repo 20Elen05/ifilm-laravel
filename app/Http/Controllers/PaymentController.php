@@ -1,15 +1,20 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Stripe\Stripe;
 use Stripe\Charge;
 use App\Models\Payment;
+use App\Http\Requests\PaymentRequest;
+use Illuminate\Http\JsonResponse;
 
 class paymentController extends Controller
 {
-    public function store(Request $request)
+    /**
+     * @param PaymentRequest $request
+     * @return JsonResponse
+     */
+    public function store(PaymentRequest $request): JsonResponse
     {
         Stripe::setApiKey('sk_test_51O3HhNLnvvEJ81Oe8CahWIfvZsz5VJEFgzgJXg39V3aow7oC87pFapCW8aL1BXYxnqlRnZQU6yypU5wpJEbHcbnn00tz9vTuWJ');
 

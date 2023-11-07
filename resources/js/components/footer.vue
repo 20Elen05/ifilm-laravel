@@ -1,8 +1,10 @@
 <template>
-     <footer class="footer-bg mt-5 p-3" style="">
-        <video class="footerVd" width="750" height="400" controls><!-- <source :src="require('@/assets/V.mp4')"> --></video>
-        <h6 class="bottomText font-light size-14 position-absolute text-white ">Copyright © 2019 iFilm.com. All Rights Reserved.</h6>
-     </footer>
+    <footer class="footer-bg mt-5 p-3" style="">
+        <video class="footerVd" width="750" height="400" controls>
+            <!-- <source :src="require('@/assets/V.mp4')"> --></video>
+        <h6 class="bottomText font-light size-14 position-absolute text-white ">Copyright © 2019 iFilm.com. All Rights
+            Reserved.</h6>
+    </footer>
 </template>
 
 <script>
@@ -25,7 +27,7 @@ export default {
 }
 
 footer {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)),  url('../assets/footer.jpg');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../assets/footer.jpg');
 }
 
 .footerVd {
@@ -34,7 +36,7 @@ footer {
     left: 25%;
 }
 
-.bottomText{
+.bottomText {
     top: 94% !important;
     left: 36% !important;
     font-weight: 400

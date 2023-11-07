@@ -1,6 +1,6 @@
 <template>
     <form ction="/signIn" method="post" @submit.prevent="submitForm">
-        <img class="width300"  src="@/assets/light-mode-logo.png" />
+        <img class="width300" src="@/assets/light-mode-logo.png"/>
         <label>
             <p class="label-txt">USERNAME</p>
             <input type="text" class="input" name="username" v-model="inputValue.username">
@@ -31,11 +31,10 @@
 
 <script>
 import axios from 'axios';
+
 export default {
     name: 'signIn',
-    components:{
-
-    },
+    components: {},
     data() {
         return {
             inputValue: {
@@ -54,7 +53,7 @@ export default {
         'inputValue.username': function (val) {
             if (val.length < 3) {
                 this.usernameError = 'The First Name should have at least 3 characters'
-            } else if(val.length > 10){
+            } else if (val.length > 10) {
                 this.usernameError = 'The first name can have maximum 10 characters'
             } else {
                 this.usernameError = ''
@@ -64,7 +63,7 @@ export default {
         'inputValue.password': function (val) {
             if (val.length < 8) {
                 this.passwordError = 'The password should have at least 3 characters'
-            } else if(val.length > 16){
+            } else if (val.length > 16) {
                 this.passwordError = 'The password can have maximum 10 characters'
             } else {
                 this.passwordError = ''
@@ -105,7 +104,7 @@ export default {
 
                     axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
 
-                    this.$router.push({ name: 'standart' });
+                    this.$router.push({name: 'standart'});
                 }
             } catch (error) {
                 if (error.response && error.response.data && error.response.data.errors) {
@@ -195,7 +194,7 @@ label {
     transition: ease .6s;
 }
 
-.input:focus+.line-box .line {
+.input:focus + .line-box .line {
     width: 100%;
 }
 
