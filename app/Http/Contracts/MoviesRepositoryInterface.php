@@ -4,7 +4,6 @@ namespace App\Http\Contracts;
 
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Movie;
 
 interface MoviesRepositoryInterface
@@ -26,9 +25,9 @@ interface MoviesRepositoryInterface
 
     /**
      * @param $id
-     * @return mixed
+     * @return Movie | null
      */
-    public function findMovieById($id): mixed;
+    public function findMovieById($id):  Movie | null;
 
     /**
      * @param $keyword
@@ -44,4 +43,11 @@ interface MoviesRepositoryInterface
      */
     public function checkLikeStatus($movieId, $userId): mixed;
 
+    /**
+     * @param $movieData
+     * @param $movieDataRu
+     * @param $categoryId
+     * @return Movie
+     */
+    public function createNewMovie($movieData, $movieDataRu, $categoryId): Movie;
 }

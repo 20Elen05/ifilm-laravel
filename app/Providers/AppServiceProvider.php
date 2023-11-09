@@ -15,6 +15,8 @@ use App\Http\Repositories\RatingsRepository;
 use App\Http\Contracts\RatingsRepositoryInterface;
 use App\Http\Repositories\LikesRepository;
 use App\Http\Contracts\LikesRepositoryInterface;
+use App\Http\Repositories\PaymentsRepository;
+use App\Http\Contracts\PaymentsRepositoryInterface;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -38,6 +40,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CommentsRepositoryInterface::class, CommentsRepository::class);
         $this->app->bind(RatingsRepositoryInterface::class, RatingsRepository::class);
         $this->app->bind(LikesRepositoryInterface::class, LikesRepository::class);
-
+        $this->app->bind(PaymentsRepositoryInterface::class, PaymentsRepository::class);
     }
 }

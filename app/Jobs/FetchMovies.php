@@ -8,14 +8,18 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
-use App\Models\Movie;
-use App\Models\Genre;
-use App\Models\MovieGenre;
-use App\Models\CategoryMovie;
+use App\Http\Contracts\MoviesRepositoryInterface;
 
 
-class FetchMovies implements ShouldQueue
-{
+class FetchMovies implements ShouldQueue {
+
+    protected MoviesRepositoryInterface $movieRepository;
+
+    public function __construct(MoviesRepositoryInterface $moviesRepository)
+    {
+        $this->movieRepository = $moviesRepository;
+    }
+
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function handle() {
@@ -36,7 +40,7 @@ class FetchMovies implements ShouldQueue
                 foreach ($films as $index => $movieData) {
                     $movieDataRu = $filmsRu[$index];
 
-                    Movie::createNewMovie($movieData, $movieDataRu, $categoryId);
+                   $this->movieRepository->createNewMovie($movieData, $movieDataRu, $categoryId);
                 }
             }
 

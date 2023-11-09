@@ -2,8 +2,6 @@
 
 namespace App\Http\Contracts;
 
-use App\Models\Like;
-
 interface LikesRepositoryInterface
 {
     /**

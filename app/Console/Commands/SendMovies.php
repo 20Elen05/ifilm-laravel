@@ -1,6 +1,7 @@
 <?php
 namespace App\Console\Commands;
 
+use App\Http\Contracts\MoviesRepositoryInterface;
 use Illuminate\Console\Command;
 use App\Jobs\FetchMovies;
 
@@ -11,7 +12,7 @@ class SendMovies extends Command
 
     public function handle()
     {
-        FetchMovies::dispatch();
+        FetchMovies::dispatch(app()->make(MoviesRepositoryInterface::class));
         $this->info('FetchMovies dispatched successfully!');
     }
 }
