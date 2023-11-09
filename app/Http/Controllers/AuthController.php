@@ -5,15 +5,19 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SignUpRequest;
 use App\Http\Requests\SigninRequest;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Http\JsonResponse;
+use App\Http\Contracts\UserRepositoryInterface;
+use Illuminate\Support\Facades\Hash;
 use Auth;
 
 class AuthController extends Controller
 {
+    protected $userRepository;
 
-    use HasApiTokens;
+    public function __construct(UserRepositoryInterface $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
 
     /**
      * @param SignUpRequest $request
@@ -21,13 +25,9 @@ class AuthController extends Controller
      */
     public function signupUser(SignupRequest $request): JsonResponse
     {
-        $user = User::create([
-            'first_name' => $request->input('firstName'),
-            'surname' => $request->input('surname'),
-            'username' => $request->input('username'),
-            'email' => $request->input('email'),
-            'password' => Hash::make($request->input('password')),
-        ]);
+        $userData = $request->only(['firstName', 'surname', 'username', 'email', 'password']);
+        $user = $this->userRepository->create($userData);
+
         return response()->json([
             'message' => 'User registered successfully',
             'status' => true,
@@ -41,13 +41,12 @@ class AuthController extends Controller
      */
     public function signinUser(SigninRequest $request): JsonResponse
     {
-
         $username = $request->input('username');
         $password = $request->input('password');
+        $user = $this->userRepository->findByUsername($username);
 
-        if (Auth::attempt(['username' => $username, 'password' => $password])) {
-            $userId = Auth::id();
-            $user = Auth::user();
+        if ($user && Hash::check($password, $user->password)) {
+            $userId = $user->id;
             $token = $user->createToken('authToken');
             session(['authenticated' => true]);
 
@@ -65,10 +64,10 @@ class AuthController extends Controller
      * @param $userIds
      * @return JsonResponse
      */
-    public function getUsers($userIds): JsonResponse
+    public function getUsers(string $userIds): JsonResponse
     {
         $userIdsArray = explode(',', $userIds);
-        $users = User::whereIn('id', $userIdsArray)->get();
+        $users = $this->userRepository->getUsersByIds($userIdsArray);
 
         return response()->json($users)->setStatusCode(200);
     }
@@ -80,7 +79,7 @@ class AuthController extends Controller
     {
         $user = Auth::user();
         if ($user) {
-            $user->tokens()->delete();
+            $this->userRepository->logoutUserTokens($user);
             session(['authenticated' => false]);
             return response()->json(['message' => 'Logged out successfully'])->setStatusCode(204);
         } else {
@@ -94,10 +93,9 @@ class AuthController extends Controller
      */
     public function deleteAccount(int $userId): JsonResponse
     {
-        $user = User::find($userId);
+        $user = $this->userRepository->findUserById($userId);
         if ($user) {
-            $user->delete();
-            $user->tokens()->delete();
+            $this->userRepository->deleteUser($userId);
             return response()->json(['message' => 'User deleted successfully'])->setStatusCode(204);
         } else {
             return response()->json(['error' => 'User not found'], 404);
@@ -110,7 +108,7 @@ class AuthController extends Controller
      */
     public function show(int $userId): JsonResponse
     {
-        $user = User::find($userId);
+        $user = $this->userRepository->findUserById($userId);
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);
         }

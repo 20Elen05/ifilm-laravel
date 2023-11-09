@@ -2,14 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Repositories\RatingsRepository;
 use App\Models\Rating;
 use App\Models\Movie;
 use App\Http\Requests\RatingRequest;
 use Illuminate\Http\JsonResponse;
+use App\Http\Contracts\RatingsRepositoryInterface;
+use App\Http\Contracts\MoviesRepositoryInterface;
 
 
 class RatingController extends Controller
 {
+    protected $moviesRepository;
+    protected $ratingsRepository;
+
+    public function __construct(RatingsRepositoryInterface $ratingsRepository, MoviesRepositoryInterface $moviesRepository)
+    {
+        $this->ratingsRepository = $ratingsRepository;
+        $this->moviesRepository = $moviesRepository;
+    }
+
     /**
      * @param RatingRequest $request
      * @return JsonResponse
@@ -17,26 +29,20 @@ class RatingController extends Controller
     public function rateMovie(RatingRequest $request): JsonResponse
     {
         $user = auth()->user();
+        $ratingData = $request->validated();
 
-        $ratingData = $request->all();
-
-        $existingRating = Rating::where('user_id', $user->id)
-            ->where('movie_id', $ratingData['movie_id'])
-            ->first();
+        $existingRating = $this->ratingsRepository->findRating($user->id, $ratingData['movie_id']);
 
         if (!$existingRating) {
-            $rating = new Rating([
+            $this->ratingsRepository->createRating([
                 'user_id' => $user->id,
                 'movie_id' => $ratingData['movie_id'],
                 'rating' => $ratingData['rating'],
             ]);
-            $rating->save();
-
-            $movie = Movie::find($ratingData['movie_id']);
+            $movie = $this->moviesRepository->findMovieById($ratingData['movie_id']);
             $movie->vote_count += 1;
             $movie->vote_average = (($movie->vote_average * ($movie->vote_count - 1)) + $ratingData['rating']) / $movie->vote_count;
             $movie->save();
-
             return response()->json(['message' => 'rated successfully'], 201);
         } else {
             return response()->json(['message' => 'already rated'], 409);

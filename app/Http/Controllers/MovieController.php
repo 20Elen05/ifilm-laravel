@@ -4,12 +4,21 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use App\Models\Movie;
-use App\Models\Category;
 use App\Http\Requests\MovieRequest;
-
+use App\Http\Contracts\MoviesRepositoryInterface;
+use App\Http\Contracts\CategoriesRepositoryInterface;
 
 class MovieController extends Controller
 {
+    protected $categoryRepository;
+    protected $movieRepository;
+
+    public function __construct(MoviesRepositoryInterface $moviesRepository, CategoriesRepositoryInterface $categoriesRepository)
+    {
+        $this->movieRepository = $moviesRepository;
+        $this->categoryRepository = $categoriesRepository;
+    }
+
     /**
      * @param MovieRequest $request
      * @return JsonResponse
@@ -20,19 +29,9 @@ class MovieController extends Controller
         $perPage = 20;
         $categoryId = 1;
 
-        $category = Category::find($categoryId);
+        $category = $this->categoryRepository->findCategoryById($categoryId);
 
-        $movies = $category->movies()
-            ->paginate($perPage);
-
-        $lang = $request->input('lang', 'en');
-
-        $movies->transform(function ($movie) use ($lang) {
-            $content = json_decode($movie->content, true);
-            $selectedContent = $content[$lang];
-            $movie->content = $selectedContent;
-            return $movie;
-        });
+        $movies = $this->movieRepository->getMoviesInCategory($category, $request->input('lang', 'en'), $perPage);
 
         return response()->json($movies);
     }
@@ -46,7 +45,7 @@ class MovieController extends Controller
     {
         $lang = $request->input('lang', 'en');
 
-        $movie = Movie::with('genres', 'categories', 'payments')->find($id);
+        $movie = $this->movieRepository->findMovieById($id);
 
         if (!$movie) {
             return response()->json(['message' => 'Movie not found'], 404);
@@ -70,21 +69,11 @@ class MovieController extends Controller
         $perPage = 20;
         $categoryId = 1;
 
-        $category = Category::find($categoryId);
+        $category = $this->categoryRepository->findCategoryById($categoryId);
 
-        $movies = $category->movies()
-            ->paginate($perPage);
+        $movies = $this->movieRepository->getMoviesInCategory($category, $request->input('lang', 'en'), $perPage);
 
-        $lang = $request->query('lang', 'en');
-
-        $movies->transform(function ($movie) use ($lang) {
-            $content = json_decode($movie->content, true);
-            $selectedContent = $content[$lang] ?? $content['en'];
-            $movie->content = $selectedContent;
-            return $movie;
-        });
-
-        return response()->json($movies, 200);
+        return response()->json($movies);
     }
 
     /**
@@ -96,19 +85,9 @@ class MovieController extends Controller
         $perPage = 10;
         $categoryId = 2;
 
-        $category = Category::find($categoryId);
+        $category = $this->categoryRepository->findCategoryById($categoryId);
 
-        $movies = $category->movies()
-            ->paginate($perPage);
-
-        $lang = $request->query('lang', 'en');
-
-        $movies->transform(function ($movie) use ($lang) {
-            $content = json_decode($movie->content, true);
-            $selectedContent = $content[$lang] ?? $content['en'];
-            $movie->content = $selectedContent;
-            return $movie;
-        });
+        $movies = $this->movieRepository->getMoviesInCategory($category, $request->input('lang', 'en'), $perPage);
 
         return response()->json($movies);
     }
@@ -122,19 +101,9 @@ class MovieController extends Controller
         $perPage = 10;
         $categoryId = 3;
 
-        $category = Category::find($categoryId);
+        $category = $this->categoryRepository->findCategoryById($categoryId);
 
-        $movies = $category->movies()
-            ->paginate($perPage);
-
-        $lang = $request->query('lang', 'en');
-
-        $movies->transform(function ($movie) use ($lang) {
-            $content = json_decode($movie->content, true);
-            $selectedContent = $content[$lang] ?? $content['en'];
-            $movie->content = $selectedContent;
-            return $movie;
-        });
+        $movies = $this->movieRepository->getMoviesInCategory($category, $request->input('lang', 'en'), $perPage);
 
         return response()->json($movies);
     }
@@ -148,8 +117,7 @@ class MovieController extends Controller
         $keyword = $request->query('keyword');
         $lang = $request->query('lang', 'en');
 
-        $movies = Movie::whereRaw("JSON_UNQUOTE(JSON_EXTRACT(content, '$." . $lang . ".title')) LIKE ? OR JSON_UNQUOTE(JSON_EXTRACT(content, '$." . $lang . ".overview')) LIKE ?", ["%$keyword%", "%$keyword%"])
-            ->get();
+        $movies = $this->movieRepository->searchMoviesByKeyword($keyword, $lang);
 
         foreach ($movies as $movie) {
             $content = json_decode($movie->content, true);
@@ -183,12 +151,7 @@ class MovieController extends Controller
         $likedMovieIds = $request->input('likedMovieIds');
         $lang = $request->query('lang', 'en');
 
-        $movies = Movie::whereIn('movie_id', function ($query) use ($likedMovieIds) {
-            $query->select('likeable_id')
-                ->from('likes')
-                ->where('likeable_type', 'App\Models\Movie')
-                ->whereIn('likeable_id', $likedMovieIds);
-        })->get();
+        $movies = $this->movieRepository->getLikedMovies($likedMovieIds, $lang);
 
         $movies->transform(function ($movie) use ($lang) {
             $content = json_decode($movie->content, true);
